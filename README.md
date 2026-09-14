@@ -50,6 +50,29 @@ npm run build
 - `src/music/cues.ts` owns provisional, hand-authored cues for this song.
 - `src/audio/` owns independent audio decoding and deterministic PCM analysis.
 
+## Song weather inference
+
+Open **Song weather** to analyze a local MP3/WAV or another browser-supported
+audio file. Files stay in the browser. The decoder resamples to 16 kHz and
+samples up to twelve two-second excerpts across the recording. A worker runs
+the existing FFT; a separate heuristic ranks Rain, Storm, and Clearing from
+level, spectral balance, and changes in the spectrum. The 30 MB and ten-minute
+limits keep this first implementation bounded.
+
+Scores express rule fit, not probabilities. This is an untrained artistic
+mapping; mastering level, spectral mix, and excerpt selection can change its
+choice. It does not infer lyrics or emotional meaning. Silence receives no
+weather. Close rankings are marked ambiguous. Synthetic examples demonstrate
+the controls and are not evidence of accuracy on songs.
+
+Apply uses the selected weather in this exhibit and turns off the authored
+weather timeline. It does not replace the YouTube song. Manual weather choices
+and Follow authored score remain available. No YouTube audio is analyzed.
+
+The GitHub review considered [Meyda](https://github.com/meyda/meyda), an MIT
+licensed feature extractor. This version reuses the existing FFT rather than
+adding a second extractor. No third-party classifier code was copied.
+
 The scene does not read the YouTube iframe. It receives control values through
 its explicit API. Playback time is the synchronization authority; camera and
 weather inspection remain available without playing audio.

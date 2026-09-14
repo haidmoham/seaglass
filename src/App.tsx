@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ExhibitControls } from "./components/ExhibitControls";
 import { ExhibitNotes } from "./components/ExhibitNotes";
 import { PlayerDock } from "./components/PlayerDock";
+import { WeatherInferencePanel } from "./components/WeatherInferencePanel";
 import { chapterAt, cueEnergy, SONG } from "./music/cues";
 import {
   connectYouTube,
@@ -35,6 +36,7 @@ export default function App() {
   const [weather, setWeather] = useState<WeatherMode>("supercell");
   const [followScore, setFollowScore] = useState(true);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [inferenceOpen, setInferenceOpen] = useState(false);
   const [sceneError, setSceneError] = useState(false);
   const currentChapter = chapterAt(playback.time);
   const effectiveWeather = followScore ? currentChapter.weather : weather;
@@ -84,6 +86,7 @@ export default function App() {
       if (event.key !== "Escape") return;
       setImmersive(false);
       setNotesOpen(false);
+      setInferenceOpen(false);
     }
     window.addEventListener("keydown", closeOverlay);
     return () => window.removeEventListener("keydown", closeOverlay);
@@ -125,6 +128,16 @@ export default function App() {
         <div className="header-center">
           <span className="live-dot" /> A SONG YOU CAN ENTER
         </div>
+        <button
+          className="text-button"
+          type="button"
+          onClick={() => {
+            setInferenceOpen(true);
+            setNotesOpen(false);
+          }}
+        >
+          Song weather
+        </button>
         <button
           className="text-button exhibit-notes"
           type="button"
@@ -260,6 +273,15 @@ export default function App() {
           playbackReady={playback.ready}
           onClose={() => setNotesOpen(false)}
           onSeek={(time) => playerRef.current?.seek(time)}
+        />
+      )}
+      {inferenceOpen && (
+        <WeatherInferencePanel
+          onClose={() => setInferenceOpen(false)}
+          onApply={(mode) => {
+            chooseWeather(mode);
+            setInferenceOpen(false);
+          }}
         />
       )}
     </main>

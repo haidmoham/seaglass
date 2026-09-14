@@ -1,5 +1,17 @@
 # Local verification — 2026-09-14
 
+## Song weather inference — 2026-09-14
+
+- Eighteen tests pass, including silence/invalid signal, close rankings, quiet
+  audio, and generated PCM passed through the real FFT into the classifier.
+- Browser file-input verification used a generated four-second 3 kHz WAV.
+  Offline decoding and worker analysis returned Clearing with brightness 100%,
+  energy 15%, and a 0.95 relative fit. Apply selected Clearing and turned off
+  Follow authored score. This is an end-to-end synthetic signal check, not a
+  claim of song classification accuracy.
+- The inference panel rendered in a narrow browser viewport with scrollable
+  content and reachable controls. Lint and TypeScript/build checks passed.
+
 ## Basic authored reactivity — 2026-09-14
 
 - Added bounded bass-like, accent, and shimmer envelopes evaluated from playback

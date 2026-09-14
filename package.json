@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false",
     "lint": "oxlint -c oxlint.config.json .",
-    "test": "node --import tsx --test src/audio/analysis.test.ts src/music/reactivity.test.ts"
+    "test": "node --import tsx --test src/audio/analysis.test.ts src/music/reactivity.test.ts src/weather/inference.test.ts"
   },
   "dependencies": {
     "react": "^19.3.0",

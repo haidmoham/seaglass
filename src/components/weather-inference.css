@@ -1,0 +1,327 @@
+.weather-inference-backdrop {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #02151dc7;
+  backdrop-filter: blur(12px);
+}
+
+.weather-inference-panel {
+  width: min(680px, 94vw);
+  max-height: min(820px, calc(100svh - 48px));
+  overflow: auto;
+  padding: 28px;
+  border: 1px solid #c8e1d459;
+  background: #0b242bf5;
+  color: #eef3ea;
+  box-shadow: 0 24px 90px #041720;
+}
+
+.weather-inference-heading,
+.weather-inference-verdict,
+.weather-inference-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.weather-inference-heading h2 {
+  max-width: 500px;
+  margin: 9px 0 0;
+  font:
+    600 clamp(32px, 5vw, 48px) / 0.96 "Barlow Condensed",
+    sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.weather-inference-heading > button {
+  align-self: flex-start;
+  padding: 2px 8px;
+  border: 0;
+  background: transparent;
+  color: #eef3ea;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.weather-inference-eyebrow {
+  margin: 0;
+  color: #d6f590;
+  font:
+    8px / 1.4 "IBM Plex Mono",
+    monospace;
+  letter-spacing: 0.18em;
+}
+
+.weather-inference-intro,
+.weather-inference-boundary,
+.weather-inference-examples p {
+  color: #bed1ce;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.weather-inference-intro {
+  margin: 22px 0 8px;
+}
+
+.weather-inference-boundary {
+  margin: 0 0 20px;
+  padding-left: 12px;
+  border-left: 2px solid #087575;
+}
+
+.weather-inference-file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border: 1px solid #d6f590;
+  background: #d6f590;
+  color: #09242b;
+  font:
+    600 11px "IBM Plex Mono",
+    monospace;
+  cursor: pointer;
+}
+
+.weather-inference-file:has(input:disabled) {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.weather-inference-file input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.weather-inference-file:focus-within {
+  outline: 2px solid #eef3ea;
+  outline-offset: 3px;
+}
+
+.weather-inference-filename {
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+  color: #88a6a4;
+  font:
+    9px / 1.5 "IBM Plex Mono",
+    monospace;
+}
+
+.weather-inference-error {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid #963049;
+  color: #ffd5dc;
+  font-size: 10px;
+}
+
+.weather-inference-examples {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #89a9a342;
+}
+
+.weather-inference-examples p {
+  margin: 6px 8px 0 0;
+  font-size: 9px;
+}
+
+.weather-inference-examples button {
+  min-height: 74px;
+  padding: 10px;
+  border: 1px solid #89a9a342;
+  background: #06374780;
+  color: #eef3ea;
+  text-align: left;
+  cursor: pointer;
+}
+
+.weather-inference-examples button:hover {
+  border-color: #d6f590;
+}
+
+.weather-inference-examples strong,
+.weather-inference-examples span {
+  display: block;
+}
+
+.weather-inference-examples strong {
+  font:
+    600 11px "Barlow Condensed",
+    sans-serif;
+}
+
+.weather-inference-examples span {
+  margin-top: 6px;
+  color: #9eb8b5;
+  font:
+    8px / 1.4 "IBM Plex Mono",
+    monospace;
+}
+
+.weather-inference-result {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid #89a9a342;
+  background: #061b22b8;
+}
+
+.weather-inference-verdict {
+  margin-top: 7px;
+}
+
+.weather-inference-verdict h3 {
+  margin: 0;
+  font:
+    600 31px "Barlow Condensed",
+    sans-serif;
+}
+
+.weather-inference-verdict span {
+  padding: 5px 7px;
+  border: 1px solid currentColor;
+  font:
+    8px "IBM Plex Mono",
+    monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.weather-inference-verdict .is-clear {
+  color: #d6f590;
+}
+
+.weather-inference-verdict .is-ambiguous {
+  color: #e2ad85;
+}
+
+.weather-inference-reasons {
+  margin: 12px 0 18px;
+  padding-left: 18px;
+  color: #bed1ce;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.weather-inference-score {
+  display: grid;
+  grid-template-columns: 70px 1fr 34px;
+  align-items: center;
+  gap: 10px;
+  margin: 7px 0;
+  font:
+    9px "IBM Plex Mono",
+    monospace;
+}
+
+.weather-inference-score > div {
+  height: 4px;
+  background: #89a9a329;
+}
+
+.weather-inference-score i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #087575, #d6f590);
+}
+
+.weather-inference-score output {
+  color: #bed1ce;
+  text-align: right;
+}
+
+.weather-inference-scores > p {
+  margin: 10px 0 0;
+  color: #88a6a4;
+  font:
+    8px "IBM Plex Mono",
+    monospace;
+}
+
+.weather-inference-result-note {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #89a9a329;
+  color: #9eb8b5;
+  font:
+    8px / 1.55 "IBM Plex Mono",
+    monospace;
+}
+
+.weather-inference-actions {
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.weather-inference-actions button {
+  min-height: 40px;
+  padding: 0 18px;
+  font:
+    600 9px "IBM Plex Mono",
+    monospace;
+  cursor: pointer;
+}
+
+.weather-inference-cancel {
+  border: 1px solid #89a9a359;
+  background: transparent;
+  color: #bed1ce;
+}
+
+.weather-inference-apply {
+  border: 1px solid #d6f590;
+  background: #d6f590;
+  color: #09242b;
+}
+
+.weather-inference-apply:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.7);
+  opacity: 0.45;
+}
+
+@media (max-width: 720px) {
+  .weather-inference-backdrop {
+    align-items: end;
+    padding: 0;
+  }
+
+  .weather-inference-panel {
+    width: 100%;
+    max-height: 92svh;
+    padding: 20px;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+  }
+
+  .weather-inference-examples {
+    grid-template-columns: 1fr;
+  }
+
+  .weather-inference-examples button {
+    min-height: 60px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .weather-inference-panel,
+  .weather-inference-panel * {
+    scroll-behavior: auto;
+    transition: none;
+  }
+}
