@@ -1,0 +1,32 @@
+{
+  "name": "inside-one-song",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --pretty false",
+    "lint": "oxlint -c oxlint.config.json .",
+    "test": "node --import tsx --test src/audio/analysis.test.ts"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "@oxlint/plugins": "1.83.0",
+    "@types/node": "^26.5.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.186.0",
+    "@types/youtube": "^0.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "1.83.0",
+    "prettier": "^3.9.6",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  }
+}
