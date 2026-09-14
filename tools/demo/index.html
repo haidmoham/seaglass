@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>Sea Glass demo recorder</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=DM+Sans:wght@500&display=swap">
+<style>
+body { margin: 0; background: #071321; color: #fff; font: 16px sans-serif; }
+button { padding: 18px 30px; margin: 16px; font: inherit; }
+#output { display: block; width: 432px; height: 540px; }
+#storm { position: fixed; left: -2000px; width: 1080px; height: 1350px; }
+</style>
+</head>
+<body><button id="record">Record 10-second demo</button><span id="status">ready</span>
+<canvas id="output" width="1080" height="1350"></canvas><canvas id="storm"></canvas>
+<script type="module" src="./capture.ts"></script></body></html>
