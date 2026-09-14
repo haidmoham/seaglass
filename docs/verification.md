@@ -1,5 +1,27 @@
 # Local verification — 2026-09-14
 
+## Public deployment and motion — 2026-09-14
+
+- Motion now starts enabled at the user's request. Cloud layers counterrotate,
+  glass drifts, and rain, ocean, and debris advance through the scene clock.
+  Freeze and Resume remain available and were exercised on the live site.
+- TypeScript/Vite build, configured Oxlint, and all five audio tests passed
+  after the motion change.
+- Cloudflare serves `https://seaglass.shin86.dev` and
+  `https://seaglass.mhaider.dev`. Vercel serves
+  `https://seaglass-exhibit.vercel.app`. All three returned HTTP 200 for the
+  page, JavaScript, and stylesheet from the same production build.
+- The public shin86.dev site initialized YouTube. Play reported “Playing from
+  YouTube” and its clock advanced from 0:11 through 0:27. Pause was observed.
+- The authored “After the storm” button sought to 3:15. Keyboard Home returned
+  the timeline and chapter to 0:00. With Follow authored score enabled, keyboard
+  End selected Clearing and displayed the “Your Light” cue. This verifies
+  playback-clock synchronization, not the musical accuracy of authored timing.
+- The pinned YouTube player remained visible in the narrow immersive layout.
+
+The earlier localhost handshake limitation below does not block the HTTPS
+deployment. These are browser checks, not physical phone or listening tests.
+
 ## Passed
 
 - TypeScript project check and Vite production build.

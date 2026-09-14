@@ -30,9 +30,7 @@ export default function App() {
   const playerRef = useRef<SongPlayer | null>(null);
   const [immersive, setImmersive] = useState(false);
   const [playback, setPlayback] = useState(initialPlayback);
-  const [motion, setMotion] = useState(
-    () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
+  const [motion, setMotion] = useState(true);
   const [intensity, setIntensity] = useState(1);
   const [weather, setWeather] = useState<WeatherMode>("supercell");
   const [followScore, setFollowScore] = useState(true);

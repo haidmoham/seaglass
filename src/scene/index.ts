@@ -636,6 +636,20 @@ export function createStormScene(
       rainFall = (rainFall + delta * weather.rainSpeed) % 13;
       storm.rotation.y = cloudPhase;
       debris.rotation.y = debrisPhase;
+      for (let index = 0; index < storm.children.length; index += 1) {
+        const layer = storm.children[index];
+        const direction = index % 2 === 0 ? 1 : -1;
+        const layerRate = 0.018 + index * 0.0035;
+        layer.rotation.y +=
+          delta *
+          direction *
+          layerRate *
+          weather.cloudRotation *
+          (0.45 + weather.turbulence * 0.55);
+      }
+      glass.position.y =
+        -4.6 + Math.sin(elapsed * 0.72) * 0.2 * weather.turbulence;
+      glass.rotation.y = Math.sin(elapsed * 0.31) * 0.045 * weather.debrisWind;
       for (let index = 0; index < debris.children.length; index += 1) {
         const child = debris.children[index];
         child.rotation.x +=

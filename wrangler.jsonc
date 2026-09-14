@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "seaglass-exhibit",
+  "account_id": "7ccfdec2aec5b063d5c1a1a476e4ca83",
+  "compatibility_date": "2026-09-14",
+  "assets": { "directory": "./dist" },
+  "routes": [
+    { "pattern": "seaglass.shin86.dev", "custom_domain": true },
+    { "pattern": "seaglass.mhaider.dev", "custom_domain": true },
+  ],
+}

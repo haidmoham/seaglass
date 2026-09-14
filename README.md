@@ -1,8 +1,21 @@
 # Sea Glass — exhibit 001
 
-A fresh, local experiment for **Sea Glass by Driveways**, from _Tempest_ (2024).
+A fresh experiment for **Sea Glass by Driveways**, from _Tempest_ (2024).
 The frame is an entrance into a procedural storm. This is one song-specific
 artwork, not a music search engine or an automatic music-to-world generator.
+
+Live: [shin86.dev](https://seaglass.shin86.dev),
+[mhaider.dev](https://seaglass.mhaider.dev), and
+[Vercel](https://seaglass-exhibit.vercel.app).
+
+Motion starts enabled: rain, ocean, cloud rotation, and glass drift share the
+scene clock. Freeze pauses this motion; Resume continues from that state.
+
+## Deploy
+
+Run `npm run build`, then `npx wrangler deploy` for the two Cloudflare custom
+domains. Run `npx vercel --prod` for the linked Vercel project. Both serve the
+same static Vite app. Provider credentials stay outside this repository.
 
 ## Run
 
