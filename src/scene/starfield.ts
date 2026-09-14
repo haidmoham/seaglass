@@ -42,11 +42,11 @@ const fragmentShader = /* glsl */ `
   vec3 polarizedStars(vec2 uv, float density, float depth, float polarity) {
     vec2 center = uPointer * vec2(uAspect, 1.0) * 0.5;
     vec2 offset = uv - center;
-    float influence = exp(-dot(offset, offset) * 12.0) * uMagnet * 0.2;
+    float influence = exp(-dot(offset, offset) * 12.0) * uMagnet * 0.05;
     // Separate inverse fields keep each star's seeded polarity stable in motion.
     uv += offset * influence * polarity * (0.9 + depth * 0.45);
     uv += vec2(-offset.y, offset.x) * influence * polarity * 0.22;
-    vec2 grid = (uv + uPointer * depth * 0.007) * density;
+    vec2 grid = (uv + uPointer * depth * 0.00175) * density;
     grid += vec2(uTime * depth * 0.025, uTime * depth * 0.009);
     vec2 cell = floor(grid), local = fract(grid) - 0.5;
     vec2 seed = hash(cell + depth * 37.0);
