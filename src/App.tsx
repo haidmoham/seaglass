@@ -4,6 +4,7 @@ import { ExhibitControls } from "./components/ExhibitControls";
 import { ExhibitNotes } from "./components/ExhibitNotes";
 import { PlayerDock } from "./components/PlayerDock";
 import { WeatherInferencePanel } from "./components/WeatherInferencePanel";
+import { BackgroundArtwork } from "./components/BackgroundArtwork";
 import { chapterAt, cueEnergy, SONG } from "./music/cues";
 import {
   connectYouTube,
@@ -33,7 +34,7 @@ export default function App() {
   const [playback, setPlayback] = useState(initialPlayback);
   const [motion, setMotion] = useState(true);
   const [intensity, setIntensity] = useState(1);
-  const [weather, setWeather] = useState<WeatherMode>("supercell");
+  const [weather, setWeather] = useState<WeatherMode>("storm");
   const [followScore, setFollowScore] = useState(true);
   const [notesOpen, setNotesOpen] = useState(false);
   const [inferenceOpen, setInferenceOpen] = useState(false);
@@ -103,7 +104,7 @@ export default function App() {
   }
 
   function previewCrescendo() {
-    chooseWeather("clearing");
+    chooseWeather("sun");
     setImmersive(true);
   }
 
@@ -116,6 +117,13 @@ export default function App() {
         <i />
         <i />
       </div>
+      {!immersive && (
+        <BackgroundArtwork
+          motion={motion}
+          time={playback.time}
+          playing={playback.playing}
+        />
+      )}
       <div className="museum-grain" aria-hidden="true" />
       <header className="museum-header">
         <a
@@ -176,7 +184,7 @@ export default function App() {
         >
           Enter the storm <span aria-hidden="true">↗</span>
         </button>
-        <p className="entry-hint">TOUCH THE SPECIMEN · ENTER ITS WORLD</p>
+        <p className="entry-hint">DRAG THE ARTWORK · ENTER THE WEATHER</p>
       </section>
 
       <section
@@ -214,11 +222,8 @@ export default function App() {
                 ↗
               </button>
             )}
-            {immersive && effectiveWeather === "clearing" && (
-              <div
-                className="clearing-verse"
-                aria-label="Your Light visual cue"
-              >
+            {immersive && effectiveWeather === "sun" && (
+              <div className="sun-verse" aria-label="Your Light visual cue">
                 <span>YOUR LIGHT</span>
                 <p>sky blue · porcelain</p>
               </div>

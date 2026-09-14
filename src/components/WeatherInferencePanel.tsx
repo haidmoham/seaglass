@@ -18,7 +18,7 @@ interface SyntheticExample {
 
 const syntheticExamples: readonly SyntheticExample[] = [
   {
-    name: "Steady dark rain",
+    name: "Quiet introspective snow",
     note: "Synthetic · low brightness, steady mid energy",
     frames: [
       { time: 0, rms: 0.035, low: 0.012, mid: 0.03, high: 0.002, onset: 0.002 },
@@ -50,43 +50,43 @@ const syntheticExamples: readonly SyntheticExample[] = [
     ],
   },
   {
-    name: "Gentle bright clearing",
-    note: "Synthetic · low energy, bright, and steady",
+    name: "Bright upbeat sun",
+    note: "Synthetic · bright, energetic, and rhythmic",
     frames: [
       {
         time: 0,
-        rms: 0.025,
-        low: 0.002,
-        mid: 0.005,
-        high: 0.024,
-        onset: 0.001,
+        rms: 0.18,
+        low: 0.008,
+        mid: 0.025,
+        high: 0.16,
+        onset: 0.09,
       },
       {
         time: 0.1,
-        rms: 0.025,
-        low: 0.002,
-        mid: 0.005,
-        high: 0.024,
-        onset: 0.001,
+        rms: 0.18,
+        low: 0.008,
+        mid: 0.025,
+        high: 0.16,
+        onset: 0.09,
       },
       {
         time: 0.2,
-        rms: 0.025,
-        low: 0.002,
-        mid: 0.005,
-        high: 0.024,
-        onset: 0.001,
+        rms: 0.18,
+        low: 0.008,
+        mid: 0.025,
+        high: 0.16,
+        onset: 0.09,
       },
     ],
   },
 ] as const;
 
-const scoreOrder: readonly WeatherMode[] = ["rain", "supercell", "clearing"];
+const scoreOrder: readonly WeatherMode[] = ["snow", "storm", "sun"];
 
 function modeLabel(mode: WeatherMode): string {
-  if (mode === "supercell") return "Supercell";
-  if (mode === "clearing") return "Clearing";
-  return "Rain";
+  if (mode === "storm") return "Storm";
+  if (mode === "sun") return "Sun";
+  return "Snow";
 }
 
 export function WeatherInferencePanel({

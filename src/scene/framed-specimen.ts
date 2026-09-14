@@ -11,11 +11,11 @@ const specimenVertexShader = /* glsl */ `
 
   void main() {
     vec3 direction = normalize(position);
-    float slowFold = sin(position.y * 1.55 + uTime * 0.22)
-      + sin(position.x * 1.17 - uTime * 0.17)
-      + cos((position.z + position.y) * 1.31 + uTime * 0.13);
+    float slowFold = sin(position.y * 3.1 + uTime * 0.42)
+      * cos(position.x * 2.7 - uTime * 0.29)
+      + sin((position.z + position.y) * 3.3 + uTime * 0.25);
     float fineFold = sin(position.x * 3.2 + position.z * 2.7 - uTime * 0.31);
-    float response = slowFold * (0.17 + uBass * 0.045) + fineFold * (0.04 + uAccent * 0.022);
+    float response = slowFold * (0.2 + uBass * 0.09) + fineFold * (0.035 + uAccent * 0.04);
     vec3 p = position + direction * response;
     p.x *= 1.0 + sin(position.y * 2.4 - uTime * 0.11) * 0.08;
     p.y *= 1.0 + cos(position.x * 2.1 + uTime * 0.09) * 0.07;
@@ -61,19 +61,19 @@ const specimenFragmentShader = /* glsl */ `
 
     vec3 deformedNormal = normalize(cross(dFdx(vWorldPosition), dFdy(vWorldPosition)));
     if (dot(deformedNormal, vWorldNormal) < 0.0) deformedNormal *= -1.0;
-    vec3 surfaceNormal = normalize(mix(vWorldNormal, deformedNormal, 0.35));
+    vec3 surfaceNormal = deformedNormal;
     vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
     vec3 lightDirection = normalize(vec3(-0.42, 0.76, 0.5));
     float diffuse = max(dot(surfaceNormal, lightDirection), 0.0);
-    float broadHighlight = pow(max(dot(reflect(-lightDirection, surfaceNormal), viewDirection), 0.0), 2.5);
+    float broadHighlight = pow(max(dot(reflect(-lightDirection, surfaceNormal), viewDirection), 0.0), 18.0);
     float fresnel = pow(1.0 - abs(dot(surfaceNormal, viewDirection)), 2.1);
-    color *= 0.72 + diffuse * 0.38;
-    color += vec3(0.96, 0.82, 0.72) * broadHighlight * 0.075;
+    color *= 0.18 + diffuse * 0.95;
+    color += vec3(0.96, 0.9, 0.82) * broadHighlight * 0.48;
     color += mix(vec3(0.04, 0.5, 0.46), vec3(0.76, 0.12, 0.32), pinkWeight) * fresnel * (0.18 + uShimmer * 0.1);
     float innerContour = smoothstep(0.32, 0.5, fresnel) * (1.0 - smoothstep(0.68, 0.84, fresnel));
     color += vec3(0.12, 0.52, 0.48) * innerContour * 0.13;
     color += vec3(0.98, 0.87, 0.76) * uShimmer * 0.045;
-    gl_FragColor = vec4(color, uOpacity * (0.82 + fresnel * 0.18));
+    gl_FragColor = vec4(color, uOpacity);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }
@@ -99,7 +99,7 @@ export function createFramedSpecimen(): FramedSpecimen {
     uBass: { value: 0 },
     uAccent: { value: 0 },
     uShimmer: { value: 0 },
-    uOpacity: { value: 0.76 },
+    uOpacity: { value: 1 },
     uPointer: { value: new THREE.Vector2() },
   };
   const geometry = new THREE.SphereGeometry(1, 64, 48);
@@ -109,17 +109,17 @@ export function createFramedSpecimen(): FramedSpecimen {
     uniforms,
     transparent: true,
     depthWrite: false,
-    depthTest: false,
-    side: THREE.DoubleSide,
+    depthTest: true,
+    side: THREE.FrontSide,
   });
   const object = new THREE.Mesh(geometry, material);
-  object.position.set(0, 7.5, 12.5);
-  object.scale.set(21, 15.5, 8.5);
+  object.position.set(0, 7.5, 0);
+  object.scale.setScalar(16);
   object.rotation.set(-0.08, -0.24, 0.12);
   object.renderOrder = 8;
 
   let time = 0;
-  let opacity = 0.76;
+  let opacity = 1;
   let scale = 1;
   const pointer = new THREE.Vector2();
   const pointerTarget = new THREE.Vector2();
@@ -138,7 +138,7 @@ export function createFramedSpecimen(): FramedSpecimen {
     ): void {
       if (motionEnabled) time += delta;
       const blend = 1 - Math.exp(-delta * (immersive ? 2.8 : 1.9));
-      opacity = THREE.MathUtils.lerp(opacity, immersive ? 0 : 0.76, blend);
+      opacity = THREE.MathUtils.lerp(opacity, immersive ? 0 : 1, blend);
       scale = THREE.MathUtils.lerp(scale, immersive ? 1.48 : 1, blend);
       if (motionEnabled) {
         pointerTarget.set(pointerX, pointerY);
@@ -150,7 +150,7 @@ export function createFramedSpecimen(): FramedSpecimen {
       uniforms.uShimmer.value = shimmer;
       uniforms.uOpacity.value = opacity;
       uniforms.uPointer.value.copy(pointer);
-      object.scale.set(21 * scale, 15.5 * scale, 8.5 * scale);
+      object.scale.setScalar(16 * scale);
       object.visible = opacity > 0.005;
     },
   };

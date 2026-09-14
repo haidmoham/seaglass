@@ -1,32 +1,37 @@
-export type WeatherMode = "rain" | "supercell" | "clearing";
+export type WeatherMode = "snow" | "storm" | "sun";
 
 export interface WeatherModeMetadata {
   id: WeatherMode;
   label: string;
   shortLabel: string;
+  tone: string;
   description: string;
 }
 
 export const weatherModes: readonly WeatherModeMetadata[] = [
   {
-    id: "rain",
-    label: "Sea Rain",
-    shortLabel: "Rain",
-    description: "Cold diagonal rain moves across a low teal shelf cloud.",
+    id: "snow",
+    label: "Snow",
+    shortLabel: "Snow",
+    tone: "Chill · introspective",
+    description:
+      "Chill and introspective: slow snowfall, pale light, and quiet water.",
   },
   {
-    id: "supercell",
-    label: "Supercell",
+    id: "storm",
+    label: "Storm",
     shortLabel: "Storm",
+    tone: "Intense · sad",
     description:
-      "The full mesocyclone turns above charged sea glass and branching lightning.",
+      "Intense and sad: dark clouds, driving rain, and charged sea glass.",
   },
   {
-    id: "clearing",
-    label: "After the Storm",
-    shortLabel: "Clearing",
+    id: "sun",
+    label: "Sun",
+    shortLabel: "Sun",
+    tone: "Happy · upbeat",
     description:
-      "The canopy opens into porcelain light, sea green water, and a final glass glow.",
+      "Happy and upbeat: open sky, warm sunlight, and sparkling water.",
   },
 ] as const;
 
@@ -54,29 +59,29 @@ export interface WeatherProfile {
 }
 
 export const weatherProfiles = {
-  rain: {
-    rainDensity: 0.78,
+  snow: {
+    rainDensity: 0,
     rainAngle: 0.45,
     rainSpeed: 16,
-    cloudCoverage: 0.78,
-    cloudRotation: 0.24,
-    cloudHeight: 4,
-    turbulence: 0.38,
-    debrisWind: 0.35,
-    lightningActivity: 0.18,
-    waveAmplitude: 0.58,
+    cloudCoverage: 0.35,
+    cloudRotation: 0.035,
+    cloudHeight: 22,
+    turbulence: 0.08,
+    debrisWind: 0,
+    lightningActivity: 0,
+    waveAmplitude: 0.2,
     waveSpeed: 0.72,
     foam: 0.42,
     fogDensity: 0.012,
     exposure: 1.06,
-    sky: 0x031c28,
-    fog: 0x052431,
-    keyLight: 0x63d9d2,
-    fillLight: 0x553094,
+    sky: 0x233443,
+    fog: 0x798d9d,
+    keyLight: 0xc4dce9,
+    fillLight: 0x7e89b1,
     oceanDeep: 0x031c2b,
     oceanBright: 0x087575,
   },
-  supercell: {
+  storm: {
     rainDensity: 1,
     rainAngle: 0.72,
     rainSpeed: 27,
@@ -98,15 +103,15 @@ export const weatherProfiles = {
     oceanDeep: 0x010c18,
     oceanBright: 0x087575,
   },
-  clearing: {
-    rainDensity: 0.08,
+  sun: {
+    rainDensity: 0,
     rainAngle: 0.16,
     rainSpeed: 7,
-    cloudCoverage: 0.46,
+    cloudCoverage: 0.12,
     cloudRotation: 0.08,
-    cloudHeight: 10,
+    cloudHeight: 26,
     turbulence: 0.12,
-    debrisWind: 0.08,
+    debrisWind: 0,
     lightningActivity: 0,
     waveAmplitude: 0.28,
     waveSpeed: 0.38,

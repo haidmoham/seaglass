@@ -13,7 +13,7 @@ import {
   type WeatherMode,
   type WeatherProfile,
 } from "../weather/modes";
-import { createFramedSpecimen } from "./framed-specimen";
+import { createSnow } from "./snow";
 
 export interface StormSceneController {
   setPlayback(time: number, playing: boolean): void;
@@ -431,8 +431,9 @@ export function createStormScene(
     energy: { value: 0.18 },
     turbulence: { value: 1 },
   };
-  const weather: WeatherProfile = { ...weatherProfiles.supercell };
-  let weatherTarget: WeatherProfile = weatherProfiles.supercell;
+  const weather: WeatherProfile = { ...weatherProfiles.storm };
+  let weatherTarget: WeatherProfile = weatherProfiles.storm;
+  let activeMode: WeatherMode = "storm";
   const weatherColors = {
     sky: new THREE.Color(weatherTarget.sky),
     fog: new THREE.Color(weatherTarget.fog),
@@ -461,20 +462,23 @@ export function createStormScene(
   let currentDistance = 54;
   let previousX = 0;
   let previousY = 0;
-  let pointerX = 0;
-  let pointerY = 0;
   let lastTime = performance.now();
   let cloudPhase = 0;
   let debrisPhase = 0;
   let rainFall = 0;
 
   const storm = buildStormCloud(uniforms);
-  const specimen = createFramedSpecimen();
   const glass = buildSeaGlass(uniforms);
   glass.position.set(0, -4.6, 4.5);
   glass.scale.setScalar(1.08);
   const debris = buildDebris();
   const rain = buildRain();
+  const snow = createSnow(uniforms.time);
+  const sun = new THREE.Mesh(
+    new THREE.SphereGeometry(6, 24, 16),
+    new THREE.MeshBasicMaterial({ color: 0xffedbd }),
+  );
+  sun.position.set(-26, 30, -48);
   const lightning = new THREE.Group();
   for (let index = 0; index < 7; index += 1) {
     const bolt = createLightning(
@@ -519,16 +523,9 @@ export function createStormScene(
   );
   plinth.position.y = -4.4;
 
-  scene.add(
-    ocean,
-    plinth,
-    storm,
-    glass,
-    debris,
-    rain,
-    lightning,
-    specimen.object,
-  );
+  const world = new THREE.Group();
+  world.add(ocean, plinth, storm, glass, debris, rain, lightning, snow, sun);
+  scene.add(world);
   scene.add(new THREE.HemisphereLight(0x8dbcca, 0x120819, 1.75));
   const cyanLight = new THREE.DirectionalLight(weather.keyLight, 2.8);
   cyanLight.position.set(-12, 24, 16);
@@ -571,17 +568,6 @@ export function createStormScene(
   }
 
   function onPointerMove(event: PointerEvent): void {
-    const rect = canvas.getBoundingClientRect();
-    pointerX = clamp(
-      ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 2 - 1,
-      -1,
-      1,
-    );
-    pointerY = clamp(
-      -(((event.clientY - rect.top) / Math.max(rect.height, 1)) * 2 - 1),
-      -1,
-      1,
-    );
     if (!pointerDown) return;
     const deltaX = event.clientX - previousX;
     const deltaY = event.clientY - previousY;
@@ -591,12 +577,6 @@ export function createStormScene(
     velocityY = deltaY * 0.0032;
     targetAzimuth += velocityX;
     targetElevation = clamp(targetElevation + velocityY, -0.12, 0.5);
-  }
-
-  function onPointerLeave(): void {
-    if (pointerDown) return;
-    pointerX = 0;
-    pointerY = 0;
   }
 
   function onPointerUp(event: PointerEvent): void {
@@ -610,7 +590,6 @@ export function createStormScene(
   canvas.addEventListener("pointermove", onPointerMove);
   canvas.addEventListener("pointerup", onPointerUp);
   canvas.addEventListener("pointercancel", onPointerUp);
-  canvas.addEventListener("pointerleave", onPointerLeave);
   const resizeObserver = new ResizeObserver(fitCamera);
   resizeObserver.observe(canvas);
   fitCamera();
@@ -631,6 +610,11 @@ export function createStormScene(
 
   function render(now: number): void {
     if (disposed) return;
+    snow.visible = activeMode === "snow";
+    sun.visible = activeMode === "sun";
+    storm.visible = activeMode === "storm";
+    rain.visible = activeMode === "storm";
+    debris.visible = activeMode === "storm";
     const delta = Math.min(0.05, (now - lastTime) / 1000);
     lastTime = now;
     if (motionEnabled) elapsedTime += delta;
@@ -695,16 +679,6 @@ export function createStormScene(
     cyanLight.color.lerp(weatherColors.key, 1 - Math.exp(-delta * 1.8));
     violetLight.color.lerp(weatherColors.fill, 1 - Math.exp(-delta * 1.8));
     if (motionEnabled) uniforms.time.value = elapsed;
-    specimen.update(
-      delta,
-      motionEnabled,
-      immersive,
-      uniforms.bass.value,
-      uniforms.accent.value,
-      uniforms.shimmer.value,
-      pointerX,
-      pointerY,
-    );
 
     const cloudWidth = 0.68 + weather.cloudCoverage * 0.2;
     storm.scale.set(
@@ -805,6 +779,7 @@ export function createStormScene(
       immersive = enabled;
     },
     setWeather(mode: WeatherMode): void {
+      activeMode = mode;
       weatherTarget = weatherProfiles[mode];
       weatherColors.sky.setHex(weatherTarget.sky);
       weatherColors.fog.setHex(weatherTarget.fog);
@@ -828,7 +803,6 @@ export function createStormScene(
       canvas.removeEventListener("pointermove", onPointerMove);
       canvas.removeEventListener("pointerup", onPointerUp);
       canvas.removeEventListener("pointercancel", onPointerUp);
-      canvas.removeEventListener("pointerleave", onPointerLeave);
       canvas.removeEventListener("keydown", onKeyDown);
       disposeTree(scene);
       renderer.dispose();

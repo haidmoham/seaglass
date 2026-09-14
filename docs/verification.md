@@ -1,5 +1,18 @@
 # Local verification — 2026-09-14
 
+## Background and tone correction — 2026-09-14
+
+- The blob now renders in a separate decorative page-background canvas. It is
+  absent from the framed weather scene and unmounted in the entered world.
+  Browser inspection confirmed the unobstructed frame and entry.
+- Final modes are Sun (happy/upbeat), Storm (intense/sad), and Snow
+  (chill/introspective). Snow has slow point flakes; Sun is dry with a warm
+  visible sun. Only Storm renders the funnel, rain, and flying debris.
+- Classifier mappings now favor quiet steady signals as Snow and active bright
+  signals as Sun. These remain tone proxies, not measured emotional valence.
+- Nineteen tests pass, including generated PCM for all three modes. Lint and
+  build pass. All three live hosts serve `index-DQZy0mI9.js` with HTTP 200.
+
 ## Combined public release — 2026-09-14
 
 - The Tiramisu-inspired entrance was visually inspected in wide and narrow

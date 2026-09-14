@@ -65,6 +65,7 @@ export function ExhibitControls(props: ExhibitControlsProps) {
                 }}
               >
                 {mode.shortLabel}
+                <small className="weather-tone">{mode.tone}</small>
               </button>
             ))}
           </div>

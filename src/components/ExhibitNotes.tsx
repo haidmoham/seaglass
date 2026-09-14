@@ -24,7 +24,7 @@ export function ExhibitNotes(props: ExhibitNotesProps) {
         <br />A first experiment.
       </h2>
       <p>
-        An imagined supercell surrounds one fragment of sea glass. Enter the
+        An imagined storm surrounds one fragment of sea glass. Enter the
         frame, then drag to find your own view.
       </p>
       <p>

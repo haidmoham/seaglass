@@ -8,12 +8,12 @@ export const SONG = {
 };
 
 export const chapters = [
-  { time: 0, name: "The approach", energy: 0.32, weather: "supercell" },
-  { time: 37, name: "Pressure rising", energy: 0.62, weather: "rain" },
-  { time: 73, name: "Inside the cell", energy: 0.95, weather: "supercell" },
-  { time: 112, name: "A green light", energy: 0.48, weather: "rain" },
-  { time: 151, name: "The breaking point", energy: 1, weather: "supercell" },
-  { time: 195, name: "After the storm", energy: 0.36, weather: "clearing" },
+  { time: 0, name: "The approach", energy: 0.32, weather: "storm" },
+  { time: 37, name: "Pressure rising", energy: 0.62, weather: "snow" },
+  { time: 73, name: "Inside the cell", energy: 0.95, weather: "storm" },
+  { time: 112, name: "A green light", energy: 0.48, weather: "snow" },
+  { time: 151, name: "The breaking point", energy: 1, weather: "storm" },
+  { time: 195, name: "After the storm", energy: 0.36, weather: "sun" },
 ] as const;
 
 export function chapterAt(time: number) {

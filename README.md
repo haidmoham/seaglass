@@ -6,9 +6,15 @@ artwork, not a music search engine or an automatic music-to-world generator.
 
 The entrance adapts [Tiramisu's](https://tiramisu.shin86.dev/) pigment field,
 teal title plaque, and thin frame. An original procedural blob responds to
-pointer position and authored playback envelopes. Entry expands and dissolves
-the specimen into the storm on the same canvas. Freeze holds its decorative
-motion. No Tiramisu source code or assets were copied.
+pointer position and authored playback envelopes in a separate page-background
+canvas. It never overlays the framed scene or entered world. Freeze holds its
+decorative motion. No Tiramisu source code or assets were copied.
+
+The three tone directions are **Sun** (happy and upbeat), **Storm** (intense and
+sad), and **Snow** (chill and introspective). Sun opens a warm, dry sky; Storm
+contains the mesocyclone and driving rain; Snow has slow drifting flakes and
+pale, calm surroundings. These are artistic directions. The inference rules use
+signal traits as proxies and do not measure happiness, sadness, or introspection.
 
 Live: [shin86.dev](https://seaglass.shin86.dev),
 [mhaider.dev](https://seaglass.mhaider.dev), and
@@ -61,7 +67,7 @@ npm run build
 Open **Song weather** to analyze a local MP3/WAV or another browser-supported
 audio file. Files stay in the browser. The decoder resamples to 16 kHz and
 samples up to twelve two-second excerpts across the recording. A worker runs
-the existing FFT; a separate heuristic ranks Rain, Storm, and Clearing from
+the existing FFT; a separate heuristic ranks Snow, Storm, and Sun from
 level, spectral balance, and changes in the spectrum. The 30 MB and ten-minute
 limits keep this first implementation bounded.
 

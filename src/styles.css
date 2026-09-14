@@ -324,7 +324,7 @@ h1 sup {
   line-height: 1.6;
 }
 
-.clearing-verse {
+.sun-verse {
   position: absolute;
   top: 14%;
   right: 8%;
@@ -333,13 +333,13 @@ h1 sup {
   text-shadow: 0 2px 24px #073842;
   pointer-events: none;
 }
-.clearing-verse span {
+.sun-verse span {
   font:
     600 clamp(26px, 4vw, 58px) "Barlow Condensed",
     sans-serif;
   letter-spacing: 0.08em;
 }
-.clearing-verse p {
+.sun-verse p {
   margin: 1px 0 0;
   font:
     8px "IBM Plex Mono",
@@ -410,6 +410,13 @@ h1 sup {
   border: 1px solid #a8c4bc30;
   background: #17343a;
   font-size: 8px;
+}
+.weather-tone {
+  display: block;
+  margin-top: 4px;
+  font-size: 7px;
+  line-height: 1.4;
+  opacity: 0.8;
 }
 .weather-options button.is-selected {
   border-color: #d6f590;
@@ -987,7 +994,7 @@ h1 sup {
   .is-inside .song-progress {
     margin: 8px 0;
   }
-  .clearing-verse {
+  .sun-verse {
     top: 22%;
     right: 5%;
   }

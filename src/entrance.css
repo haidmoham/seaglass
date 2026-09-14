@@ -1,4 +1,15 @@
 /* Tiramisu's pigment field and steady title plaque, adapted to this exhibit. */
+.background-artwork {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  height: 900px;
+  pointer-events: none;
+  filter: blur(10px);
+  opacity: 0.85;
+  z-index: 1;
+}
 .exhibit:not(.is-inside) {
   height: auto;
   min-height: 100svh;

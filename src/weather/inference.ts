@@ -46,7 +46,7 @@ function emptyInference(reason: string): WeatherInference {
     mode: null,
     label: "No usable signal",
     reasons: [reason],
-    scores: { rain: 0, supercell: 0, clearing: 0 },
+    scores: { snow: 0, storm: 0, sun: 0 },
     features: { energy: 0, bassShare: 0, brightness: 0, transients: 0 },
     ambiguous: false,
   };
@@ -92,44 +92,39 @@ export function inferWeather(
   const steady = 1 - transients;
   const gentle = 1 - energy;
   const darkness = 1 - brightness;
-  const midShare = clampUnit(midTotal / spectralTotal);
 
   const scores = {
-    supercell: clampUnit(energy * 0.5 + bassShare * 0.25 + transients * 0.25),
-    rain: clampUnit(
-      darkness * 0.45 + gentle * 0.25 + steady * 0.2 + midShare * 0.1,
+    storm: clampUnit(
+      energy * 0.4 + bassShare * 0.2 + darkness * 0.2 + transients * 0.2,
     ),
-    clearing: clampUnit(brightness * 0.5 + gentle * 0.3 + steady * 0.2),
+    snow: clampUnit(gentle * 0.55 + steady * 0.45),
+    sun: clampUnit(brightness * 0.45 + energy * 0.25 + transients * 0.3),
   } satisfies Record<WeatherMode, number>;
 
-  let mode: WeatherMode = "rain";
-  let topScore = scores.rain;
-  let secondScore = Math.max(scores.supercell, scores.clearing);
-  if (scores.supercell > topScore) {
-    mode = "supercell";
-    topScore = scores.supercell;
-    secondScore = Math.max(scores.rain, scores.clearing);
+  let mode: WeatherMode = "snow";
+  let topScore = scores.snow;
+  let secondScore = Math.max(scores.storm, scores.sun);
+  if (scores.storm > topScore) {
+    mode = "storm";
+    topScore = scores.storm;
+    secondScore = Math.max(scores.snow, scores.sun);
   }
-  if (scores.clearing > topScore) {
-    mode = "clearing";
-    topScore = scores.clearing;
-    secondScore = Math.max(scores.rain, scores.supercell);
+  if (scores.sun > topScore) {
+    mode = "sun";
+    topScore = scores.sun;
+    secondScore = Math.max(scores.snow, scores.storm);
   }
 
   const percentage = (value: number): string => `${Math.round(value * 100)}%`;
   const reasons = [
-    `Calibrated energy ${percentage(energy)}; bass share ${percentage(bassShare)}.`,
-    `Brightness ${percentage(brightness)}; transient activity ${percentage(transients)}.`,
+    `Tone proxies: energy ${percentage(energy)}; bass share ${percentage(bassShare)}.`,
+    `Brightness ${percentage(brightness)}; rhythmic activity ${percentage(transients)}.`,
+    "These signal features do not measure musical mood or emotional valence.",
   ];
 
   return {
     mode,
-    label:
-      mode === "supercell"
-        ? "Supercell"
-        : mode === "clearing"
-          ? "Clearing"
-          : "Rain",
+    label: mode === "storm" ? "Storm" : mode === "sun" ? "Sun" : "Snow",
     reasons,
     scores,
     features: { energy, bassShare, brightness, transients },
