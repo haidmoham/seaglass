@@ -1,5 +1,18 @@
 # Local verification — 2026-09-14
 
+## Combined public release — 2026-09-14
+
+- The Tiramisu-inspired entrance was visually inspected in wide and narrow
+  browser layouts. Drag, entry, and the specimen's dissolve into the storm were
+  exercised. No scene errors were captured in the browser console.
+- Production audio-file analysis returned Clearing for the synthetic 3 kHz WAV;
+  Apply selected Clearing and disabled the authored weather score on HTTPS.
+- Both custom domains and Vercel return the same `index-ij5SxLz-.js` build and
+  `song-analysis.worker-DnfkNG7N.js`, all HTTP 200. Final lint and build pass;
+  all eighteen tests passed before the entrance-only changes.
+- Physical-phone GPU performance and weather classification on real song
+  examples remain unmeasured. The classifier is explicitly an untrained rule.
+
 ## Song weather inference — 2026-09-14
 
 - Eighteen tests pass, including silence/invalid signal, close rankings, quiet

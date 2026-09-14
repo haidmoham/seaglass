@@ -108,7 +108,14 @@ export default function App() {
   }
 
   return (
-    <main className={immersive ? "exhibit is-inside" : "exhibit"}>
+    <main
+      className={`exhibit${immersive ? " is-inside" : ""}${motion ? "" : " is-frozen"}`}
+    >
+      <div className="entrance-pigment" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </div>
       <div className="museum-grain" aria-hidden="true" />
       <header className="museum-header">
         <a
@@ -153,15 +160,9 @@ export default function App() {
           COLLECTION 001 <span>/</span> DRIVEWAYS
         </p>
         <h1>
-          SEA
-          <br />
-          <span>GLASS</span>
-          <sup>01</sup>
+          sea glass<span>.</span>
         </h1>
-        <p className="intro-copy">
-          Some songs stay with you. <br />
-          This one is a place.
-        </p>
+        <p className="intro-copy">A song, held in the weather.</p>
         <div className="intro-rule" />
         <p className="catalog-meta">
           A SUPERCELL. A FRAGMENT. A WAY THROUGH.
@@ -175,7 +176,7 @@ export default function App() {
         >
           Enter the storm <span aria-hidden="true">↗</span>
         </button>
-        <p className="entry-hint">DRAG TO LOOK AROUND · HEADPHONES ON</p>
+        <p className="entry-hint">TOUCH THE SPECIMEN · ENTER ITS WORLD</p>
       </section>
 
       <section

@@ -13,6 +13,7 @@ import {
   type WeatherMode,
   type WeatherProfile,
 } from "../weather/modes";
+import { createFramedSpecimen } from "./framed-specimen";
 
 export interface StormSceneController {
   setPlayback(time: number, playing: boolean): void;
@@ -460,12 +461,15 @@ export function createStormScene(
   let currentDistance = 54;
   let previousX = 0;
   let previousY = 0;
+  let pointerX = 0;
+  let pointerY = 0;
   let lastTime = performance.now();
   let cloudPhase = 0;
   let debrisPhase = 0;
   let rainFall = 0;
 
   const storm = buildStormCloud(uniforms);
+  const specimen = createFramedSpecimen();
   const glass = buildSeaGlass(uniforms);
   glass.position.set(0, -4.6, 4.5);
   glass.scale.setScalar(1.08);
@@ -515,7 +519,16 @@ export function createStormScene(
   );
   plinth.position.y = -4.4;
 
-  scene.add(ocean, plinth, storm, glass, debris, rain, lightning);
+  scene.add(
+    ocean,
+    plinth,
+    storm,
+    glass,
+    debris,
+    rain,
+    lightning,
+    specimen.object,
+  );
   scene.add(new THREE.HemisphereLight(0x8dbcca, 0x120819, 1.75));
   const cyanLight = new THREE.DirectionalLight(weather.keyLight, 2.8);
   cyanLight.position.set(-12, 24, 16);
@@ -558,6 +571,17 @@ export function createStormScene(
   }
 
   function onPointerMove(event: PointerEvent): void {
+    const rect = canvas.getBoundingClientRect();
+    pointerX = clamp(
+      ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 2 - 1,
+      -1,
+      1,
+    );
+    pointerY = clamp(
+      -(((event.clientY - rect.top) / Math.max(rect.height, 1)) * 2 - 1),
+      -1,
+      1,
+    );
     if (!pointerDown) return;
     const deltaX = event.clientX - previousX;
     const deltaY = event.clientY - previousY;
@@ -567,6 +591,12 @@ export function createStormScene(
     velocityY = deltaY * 0.0032;
     targetAzimuth += velocityX;
     targetElevation = clamp(targetElevation + velocityY, -0.12, 0.5);
+  }
+
+  function onPointerLeave(): void {
+    if (pointerDown) return;
+    pointerX = 0;
+    pointerY = 0;
   }
 
   function onPointerUp(event: PointerEvent): void {
@@ -580,6 +610,7 @@ export function createStormScene(
   canvas.addEventListener("pointermove", onPointerMove);
   canvas.addEventListener("pointerup", onPointerUp);
   canvas.addEventListener("pointercancel", onPointerUp);
+  canvas.addEventListener("pointerleave", onPointerLeave);
   const resizeObserver = new ResizeObserver(fitCamera);
   resizeObserver.observe(canvas);
   fitCamera();
@@ -664,6 +695,16 @@ export function createStormScene(
     cyanLight.color.lerp(weatherColors.key, 1 - Math.exp(-delta * 1.8));
     violetLight.color.lerp(weatherColors.fill, 1 - Math.exp(-delta * 1.8));
     if (motionEnabled) uniforms.time.value = elapsed;
+    specimen.update(
+      delta,
+      motionEnabled,
+      immersive,
+      uniforms.bass.value,
+      uniforms.accent.value,
+      uniforms.shimmer.value,
+      pointerX,
+      pointerY,
+    );
 
     const cloudWidth = 0.68 + weather.cloudCoverage * 0.2;
     storm.scale.set(
@@ -787,6 +828,7 @@ export function createStormScene(
       canvas.removeEventListener("pointermove", onPointerMove);
       canvas.removeEventListener("pointerup", onPointerUp);
       canvas.removeEventListener("pointercancel", onPointerUp);
+      canvas.removeEventListener("pointerleave", onPointerLeave);
       canvas.removeEventListener("keydown", onKeyDown);
       disposeTree(scene);
       renderer.dispose();

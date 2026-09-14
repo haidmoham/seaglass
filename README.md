@@ -4,6 +4,12 @@ A fresh experiment for **Sea Glass by Driveways**, from _Tempest_ (2024).
 The frame is an entrance into a procedural storm. This is one song-specific
 artwork, not a music search engine or an automatic music-to-world generator.
 
+The entrance adapts [Tiramisu's](https://tiramisu.shin86.dev/) pigment field,
+teal title plaque, and thin frame. An original procedural blob responds to
+pointer position and authored playback envelopes. Entry expands and dissolves
+the specimen into the storm on the same canvas. Freeze holds its decorative
+motion. No Tiramisu source code or assets were copied.
+
 Live: [shin86.dev](https://seaglass.shin86.dev),
 [mhaider.dev](https://seaglass.mhaider.dev), and
 [Vercel](https://seaglass-exhibit.vercel.app).
