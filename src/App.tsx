@@ -146,6 +146,14 @@ export default function App() {
           <SongSearch onSelect={selectTrack} />
         </section>
       )}
+      {!immersive && (
+        <button className="weather-entry" onClick={hitPlay}>
+          <span>enter the<br />weather</span>
+          <svg viewBox="0 0 160 120" fill="none" aria-hidden="true">
+            <path d="M12 16H82V99M42 59L82 99L122 59" />
+          </svg>
+        </button>
+      )}
       <section className="artwork-position" aria-label="Weather artwork">
         <div className="artwork-frame">
           <div className="frame-inner">
@@ -161,15 +169,6 @@ export default function App() {
               </div>
             )}
             <div className="artwork-vignette" aria-hidden="true" />
-            {!immersive && (
-              <button
-                className="frame-enter"
-                aria-label="Enter weather"
-                onClick={hitPlay}
-              >
-                ↗
-              </button>
-            )}
           </div>
         </div>
       </section>

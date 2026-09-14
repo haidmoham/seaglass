@@ -193,3 +193,51 @@
     max-height: 310px;
   }
 }
+
+.weather-entry {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(1120px, 88%);
+  margin: 0 auto 18px;
+  padding: 24px 28px 20px;
+  border-top: 1px solid #c9ffbd66;
+  background: linear-gradient(110deg, #052e36e0, #06262f9e);
+  color: #deffd4;
+  text-align: left;
+  cursor: pointer;
+}
+.weather-entry span {
+  font: 600 clamp(36px, 5.2vw, 70px)/0.88 "Barlow Condensed", "DM Sans", sans-serif;
+  letter-spacing: -0.02em;
+}
+.weather-entry svg {
+  width: clamp(110px, 17vw, 200px);
+  height: clamp(90px, 12vw, 140px);
+  overflow: visible;
+  stroke: #e1ffd2;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px #baff94) drop-shadow(0 0 18px #aaff7970);
+  transition: transform 250ms ease, filter 250ms ease;
+}
+.weather-entry:hover svg,
+.weather-entry:focus-visible svg {
+  transform: translateY(6px);
+  filter: drop-shadow(0 0 5px #c9ffa7) drop-shadow(0 0 24px #aaff79b0);
+}
+.weather-entry:focus-visible {
+  outline: 2px solid #deffd4;
+  outline-offset: 5px;
+}
+@media (max-width: 700px) {
+  .weather-entry { padding: 20px; margin-bottom: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .weather-entry svg { transition: none; }
+  .weather-entry:hover svg,
+  .weather-entry:focus-visible svg { transform: none; }
+}
