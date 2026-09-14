@@ -3,13 +3,10 @@ import { weatherModes, type WeatherMode } from "../weather/modes";
 
 interface ExhibitControlsProps {
   intensity: number;
-  followScore: boolean;
   motion: boolean;
   weather: WeatherMode;
   onIntensityChange(value: number): void;
-  onFollowScoreChange(value: boolean): void;
   onMotionChange(value: boolean): void;
-  onPreviewCrescendo(): void;
   onResetView(): void;
   onWeatherChange(value: WeatherMode): void;
 }
@@ -48,7 +45,7 @@ export function ExhibitControls(props: ExhibitControlsProps) {
       </button>
       <div className="control-detail">
         <fieldset className="weather-control">
-          <legend>Weather study</legend>
+          <legend className="sr-only">Weather</legend>
           <div className="weather-options">
             {weatherModes.map((mode) => (
               <button
@@ -65,20 +62,9 @@ export function ExhibitControls(props: ExhibitControlsProps) {
                 }}
               >
                 {mode.shortLabel}
-                <small className="weather-tone">{mode.tone}</small>
               </button>
             ))}
           </div>
-          <label className="follow-score">
-            <input
-              type="checkbox"
-              checked={props.followScore}
-              onChange={(event) =>
-                props.onFollowScoreChange(event.target.checked)
-              }
-            />
-            Follow authored score
-          </label>
         </fieldset>
         <div className="intensity-control">
           <label htmlFor="storm-intensity">Storm intensity</label>
@@ -97,17 +83,6 @@ export function ExhibitControls(props: ExhibitControlsProps) {
             {Math.round(props.intensity * 100)}%
           </output>
         </div>
-        <button
-          className="crescendo-button"
-          type="button"
-          onClick={() => {
-            props.onPreviewCrescendo();
-            setExpanded(false);
-          }}
-        >
-          Preview crescendo
-          <span>Authored visual cue · playback time stays unchanged</span>
-        </button>
       </div>
     </nav>
   );

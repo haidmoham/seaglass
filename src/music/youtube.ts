@@ -1,4 +1,4 @@
-import { SONG } from "./cues";
+import { DEFAULT_TRACK, type Track } from "./track";
 
 export interface Playback {
   time: number;
@@ -12,6 +12,7 @@ export interface SongPlayer {
   play(): void;
   pause(): void;
   seek(time: number): void;
+  load(track: Track): void;
   destroy(): void;
 }
 
@@ -70,9 +71,9 @@ function loadApi(): Promise<void> {
   return apiPromise;
 }
 
-function createPlayerFrame(): HTMLIFrameElement {
+function createPlayerFrame(track: Track): HTMLIFrameElement {
   const source = new URL(
-    `https://www.youtube-nocookie.com/embed/${SONG.videoId}`,
+    `https://www.youtube-nocookie.com/embed/${track.videoId}`,
   );
   source.searchParams.set("enablejsapi", "1");
   source.searchParams.set("origin", window.location.origin);
@@ -97,6 +98,7 @@ function createPlayerFrame(): HTMLIFrameElement {
 export function connectYouTube(
   mount: HTMLElement,
   onUpdate: (playback: Playback) => void,
+  track: Track = DEFAULT_TRACK,
 ): SongPlayer {
   mount.style.width = "100%";
   mount.style.height = "100%";
@@ -109,11 +111,15 @@ export function connectYouTube(
   let readyDeadline = 0;
   let retryTimer = 0;
   let attempt = 0;
+  let activeTrack = track;
+  let pendingTrack: Track | undefined;
 
   function publish() {
     onUpdate({
       time: ready ? (player?.getCurrentTime() ?? 0) : 0,
-      duration: ready ? player?.getDuration() || SONG.duration : SONG.duration,
+      duration: ready
+        ? player?.getDuration() || activeTrack.duration
+        : activeTrack.duration,
       playing: ready && player?.getPlayerState() === YT.PlayerState.PLAYING,
       ready,
       message,
@@ -132,7 +138,7 @@ export function connectYouTube(
     if (destroyed) return;
     attempt += 1;
     const attemptId = attempt;
-    const frame = createPlayerFrame();
+    const frame = createPlayerFrame(activeTrack);
     mount.replaceChildren(frame);
 
     player = new YT.Player(frame, {
@@ -142,6 +148,10 @@ export function connectYouTube(
           if (destroyed || attemptId !== attempt) return;
           window.clearTimeout(readyDeadline);
           ready = true;
+          if (pendingTrack) {
+            player?.cueVideoById(pendingTrack.videoId);
+            pendingTrack = undefined;
+          }
           message = "Ready to listen";
           publish();
         },
@@ -203,6 +213,22 @@ export function connectYouTube(
     },
     seek(time) {
       if (ready) player?.seekTo(time, true);
+    },
+    load(nextTrack) {
+      activeTrack = nextTrack;
+      pendingTrack = nextTrack;
+      message = "Loading from YouTube…";
+      onUpdate({
+        time: 0,
+        duration: nextTrack.duration,
+        playing: false,
+        ready,
+        message,
+      });
+      if (ready) {
+        player?.cueVideoById(nextTrack.videoId);
+        pendingTrack = undefined;
+      }
     },
     destroy() {
       destroyed = true;

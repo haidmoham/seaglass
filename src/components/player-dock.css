@@ -1,0 +1,61 @@
+.youtube-corner {
+  min-width: 200px;
+  max-width: calc(100vw - 8px);
+}
+
+.youtube-corner.is-dragged {
+  position: fixed;
+  margin: 0;
+}
+
+.youtube-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.youtube-label a {
+  margin-left: auto;
+}
+
+.youtube-drag-handle,
+.youtube-position-reset {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border: 1px solid #89a9a342;
+  background: #0b242bd9;
+  color: #bed1ce;
+  line-height: 1;
+  cursor: grab;
+  touch-action: none;
+}
+
+.youtube-drag-handle:active {
+  cursor: grabbing;
+}
+
+.youtube-position-reset {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.youtube-drag-handle:focus-visible,
+.youtube-position-reset:focus-visible {
+  outline: 2px solid #d6f590;
+  outline-offset: 2px;
+}
+
+.youtube-mount {
+  min-width: 200px;
+  min-height: 200px;
+}
+
+@media (max-width: 420px) {
+  .youtube-corner {
+    width: min(240px, calc(100vw - 8px));
+  }
+}

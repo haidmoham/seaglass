@@ -8,12 +8,13 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false",
     "lint": "oxlint -c oxlint.config.json .",
-    "test": "node --import tsx --test src/audio/analysis.test.ts src/music/reactivity.test.ts src/weather/inference.test.ts"
+    "test": "node --import tsx --test src/audio/analysis.test.ts src/audio/live-weather.test.ts src/music/reactivity.test.ts src/weather/inference.test.ts src/server/search.test.ts"
   },
   "dependencies": {
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "three": "^0.186.0"
+    "three": "^0.186.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@oxlint/plugins": "1.83.0",

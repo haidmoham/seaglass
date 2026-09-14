@@ -1,0 +1,195 @@
+/* The entrance is a single typographic action. Functional controls stay quiet. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.exhibit:not(.is-inside) .museum-header {
+  height: 52px;
+  background: transparent;
+  border: 0;
+}
+.museum-header .text-button {
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+}
+.exhibit:not(.is-inside) .intro {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 50px;
+  align-items: end;
+  margin-top: 28px;
+}
+.exhibit:not(.is-inside) h1 {
+  background: transparent;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+.hit-play {
+  display: block;
+  padding: 0 0 12px;
+  text-align: left;
+  background: none;
+  font:
+    800 clamp(100px, 13.5vw, 184px)/0.8 "Barlow Condensed",
+    "DM Sans",
+    sans-serif;
+  letter-spacing: -0.045em;
+  color: #fff5e7;
+}
+.hit-play br {
+  display: block;
+}
+.exhibit:not(.is-inside) h1 .hit-play span {
+  color: #fff5e7;
+}
+.hit-play .play-arrow {
+  display: inline-block;
+  font-size: 0.58em;
+  margin-left: 0.2em !important;
+  color: #083747 !important;
+}
+.hit-play:disabled {
+  opacity: 0.65;
+}
+.song-search {
+  min-width: 0;
+  position: relative;
+  z-index: 12;
+}
+.song-search form {
+  display: flex;
+  border-bottom: 2px solid #fff0dd;
+  background: #083747;
+}
+.song-search input {
+  min-width: 0;
+  width: 100%;
+  padding: 20px;
+  background: transparent;
+  color: white;
+  border: 0;
+  font:
+    600 19px "DM Sans",
+    sans-serif;
+}
+.song-search input::placeholder {
+  color: #c2d8d6;
+}
+.song-search form button {
+  width: 62px;
+  background: #f0eee7;
+  color: #083747;
+  font-size: 28px;
+}
+.song-search > p {
+  min-height: 1em;
+  margin: 8px 0;
+  font-size: 12px;
+}
+.song-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #6d9f9a;
+  box-shadow: 0 18px 30px #00161f80;
+}
+.song-results > button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+  background: #083747;
+  border-bottom: 1px solid #61808155;
+  text-align: left;
+}
+.song-results img {
+  width: 80px;
+  height: 48px;
+  object-fit: cover;
+}
+.song-results button > span:first-of-type {
+  flex: 1;
+  min-width: 0;
+}
+.song-results strong {
+  display: block;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.song-results small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  opacity: 0.6;
+}
+.exhibit:not(.is-inside) .scene-controls {
+  margin-top: 20px;
+}
+.live-weather-controls {
+  position: relative;
+  z-index: 8;
+  width: min(1120px, 88%);
+  margin: 12px auto;
+  font:
+    12px "DM Sans",
+    sans-serif;
+}
+.live-weather-controls button {
+  padding: 11px 14px;
+  background: #083747;
+  border: 1px solid #5e8d8f;
+  margin-right: 8px;
+}
+.live-weather-controls button[aria-pressed="true"] {
+  background: #d6f590;
+  color: #083747;
+}
+.live-weather-controls p {
+  margin: 8px 0;
+}
+.live-weather-controls small {
+  display: block;
+  opacity: 0.65;
+  margin-top: 7px;
+  font-size: 10px;
+}
+.is-inside .live-weather-controls {
+  position: absolute;
+  top: 75px;
+  left: 5%;
+  width: auto;
+  margin: 0;
+  max-width: calc(100% - 40px);
+}
+.weather-options button {
+  font-size: 12px;
+  padding: 9px 10px;
+}
+.exhibit:not(.is-inside) .listening-desk {
+  margin-top: 18px;
+}
+@media (max-width: 700px) {
+  .exhibit:not(.is-inside) .intro {
+    grid-template-columns: 1fr;
+    gap: 26px;
+    margin-top: 18px;
+  }
+  .hit-play {
+    font-size: clamp(100px, 26vw, 170px);
+  }
+  .song-search input {
+    font-size: 16px;
+    padding: 16px;
+  }
+  .song-results {
+    max-height: 310px;
+  }
+}

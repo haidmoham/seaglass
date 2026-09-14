@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-
 import { ExhibitControls } from "./components/ExhibitControls";
-import { ExhibitNotes } from "./components/ExhibitNotes";
 import { PlayerDock } from "./components/PlayerDock";
 import { WeatherInferencePanel } from "./components/WeatherInferencePanel";
 import { BackgroundArtwork } from "./components/BackgroundArtwork";
-import { chapterAt, cueEnergy, SONG } from "./music/cues";
+import { SongSearch } from "./components/SongSearch";
+import { LiveWeatherControl } from "./components/LiveWeatherControl";
+import { DEFAULT_TRACK, type Track } from "./music/track";
 import {
   connectYouTube,
   type Playback,
@@ -19,10 +19,10 @@ import type { WeatherMode } from "./weather/modes";
 
 const initialPlayback: Playback = {
   time: 0,
-  duration: SONG.duration,
+  duration: DEFAULT_TRACK.duration,
   playing: false,
   ready: false,
-  message: "Connecting to YouTube…",
+  message: "loading",
 };
 
 export default function App() {
@@ -30,20 +30,19 @@ export default function App() {
   const playerMountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<StormSceneController | null>(null);
   const playerRef = useRef<SongPlayer | null>(null);
+  const [track, setTrack] = useState(DEFAULT_TRACK);
   const [immersive, setImmersive] = useState(false);
   const [playback, setPlayback] = useState(initialPlayback);
   const [motion, setMotion] = useState(true);
   const [intensity, setIntensity] = useState(1);
   const [weather, setWeather] = useState<WeatherMode>("storm");
-  const [followScore, setFollowScore] = useState(true);
-  const [notesOpen, setNotesOpen] = useState(false);
+  const [liveEnabled, setLiveEnabled] = useState(false);
   const [inferenceOpen, setInferenceOpen] = useState(false);
   const [sceneError, setSceneError] = useState(false);
-  const currentChapter = chapterAt(playback.time);
-  const effectiveWeather = followScore ? currentChapter.weather : weather;
+  const [seekVersion, setSeekVersion] = useState(0);
 
   useEffect(() => {
-    if (canvasRef.current === null) return;
+    if (!canvasRef.current) return;
     try {
       sceneRef.current = createStormScene(canvasRef.current);
     } catch {
@@ -54,9 +53,8 @@ export default function App() {
       sceneRef.current = null;
     };
   }, []);
-
   useEffect(() => {
-    if (playerMountRef.current === null) return;
+    if (!playerMountRef.current) return;
     const mount = document.createElement("div");
     playerMountRef.current.append(mount);
     playerRef.current = connectYouTube(mount, setPlayback);
@@ -65,47 +63,39 @@ export default function App() {
       playerRef.current = null;
     };
   }, []);
-
   useEffect(() => sceneRef.current?.setMotion(motion), [motion]);
   useEffect(
     () => sceneRef.current?.setPlayback(playback.time, playback.playing),
     [playback.time, playback.playing],
   );
   useEffect(() => sceneRef.current?.setIntensity(intensity), [intensity]);
-  useEffect(
-    () => sceneRef.current?.setEnergy(cueEnergy(playback.time)),
-    [playback.time],
-  );
   useEffect(() => sceneRef.current?.setImmersive(immersive), [immersive]);
-  useEffect(
-    () => sceneRef.current?.setWeather(effectiveWeather),
-    [effectiveWeather],
-  );
-
+  useEffect(() => sceneRef.current?.setWeather(weather), [weather]);
   useEffect(() => {
-    function closeOverlay(event: KeyboardEvent) {
+    function close(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
       setImmersive(false);
-      setNotesOpen(false);
       setInferenceOpen(false);
     }
-    window.addEventListener("keydown", closeOverlay);
-    return () => window.removeEventListener("keydown", closeOverlay);
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
   }, []);
 
+  function chooseWeather(mode: WeatherMode) {
+    setLiveEnabled(false);
+    setWeather(mode);
+  }
+  function selectTrack(next: Track) {
+    setTrack(next);
+    playerRef.current?.load(next);
+  }
+  function hitPlay() {
+    playerRef.current?.play();
+    setImmersive(true);
+  }
   function togglePlayback() {
     if (playback.playing) playerRef.current?.pause();
     else playerRef.current?.play();
-  }
-
-  function chooseWeather(mode: WeatherMode) {
-    setFollowScore(false);
-    setWeather(mode);
-  }
-
-  function previewCrescendo() {
-    chooseWeather("sun");
-    setImmersive(true);
   }
 
   return (
@@ -126,161 +116,91 @@ export default function App() {
       )}
       <div className="museum-grain" aria-hidden="true" />
       <header className="museum-header">
-        <a
-          className="museum-wordmark"
-          href="#gallery"
-          onClick={() => setImmersive(false)}
-          aria-label="Return to the gallery"
-        >
-          <span className="museum-symbol" aria-hidden="true">
-            ◈
-          </span>
-          <span>
-            AFTERIMAGE
-            <span className="wordmark-sub">MUSEUM OF INNER WEATHER</span>
-          </span>
-        </a>
-        <div className="header-center">
-          <span className="live-dot" /> A SONG YOU CAN ENTER
-        </div>
         <button
           className="text-button"
-          type="button"
-          onClick={() => {
-            setInferenceOpen(true);
-            setNotesOpen(false);
-          }}
+          aria-label="Back to search"
+          onClick={() => setImmersive(false)}
         >
-          Song weather
+          ↖
         </button>
-        <button
-          className="text-button exhibit-notes"
-          type="button"
-          onClick={() => setNotesOpen(!notesOpen)}
-          aria-expanded={notesOpen}
-        >
-          Exhibit notes <span>↗</span>
+        <button className="text-button" onClick={() => setInferenceOpen(true)}>
+          audio file
         </button>
       </header>
-
-      <section id="gallery" className="intro" aria-label="Exhibit introduction">
-        <p className="eyebrow">
-          COLLECTION 001 <span>/</span> DRIVEWAYS
-        </p>
-        <h1>
-          sea glass<span>.</span>
-        </h1>
-        <p className="intro-copy">A song, held in the weather.</p>
-        <div className="intro-rule" />
-        <p className="catalog-meta">
-          A SUPERCELL. A FRAGMENT. A WAY THROUGH.
-          <br />
-          TEMPEST, 2024 · 03:43
-        </p>
-        <button
-          className="enter-button"
-          type="button"
-          onClick={() => setImmersive(true)}
-        >
-          Enter the storm <span aria-hidden="true">↗</span>
-        </button>
-        <p className="entry-hint">DRAG THE ARTWORK · ENTER THE WEATHER</p>
-      </section>
-
-      <section
-        className="artwork-position"
-        aria-label="Sea Glass storm artwork"
-      >
-        <div className="frame-shadow" />
+      {!immersive && (
+        <section id="gallery" className="intro" aria-label="Play a song">
+          <h1>
+            <button
+              className="hit-play"
+              onClick={hitPlay}
+              disabled={!playback.ready}
+            >
+              just hit
+              <br />
+              <span>play</span>
+              <span className="play-arrow" aria-hidden="true">
+                ↗
+              </span>
+            </button>
+          </h1>
+          <SongSearch onSelect={selectTrack} />
+        </section>
+      )}
+      <section className="artwork-position" aria-label="Weather artwork">
         <div className="artwork-frame">
           <div className="frame-inner">
             <canvas
               ref={canvasRef}
               className="storm-canvas"
               tabIndex={0}
-              aria-label="Three-dimensional storm. Drag to orbit. Arrow keys move the camera."
+              aria-label="Drag to orbit. Arrow keys move the camera."
             />
             {sceneError && (
               <div className="scene-error">
-                This browser could not start the 3D exhibit. Try a browser with
-                WebGL enabled.
+                3D couldn’t start. Try another browser.
               </div>
             )}
             <div className="artwork-vignette" aria-hidden="true" />
-            <span className="artwork-mark" aria-hidden="true">
-              SG—001
-              <br />
-              ATMOSPHERIC STUDY
-            </span>
             {!immersive && (
               <button
                 className="frame-enter"
-                type="button"
-                aria-label="Enter the three-dimensional storm"
-                onClick={() => setImmersive(true)}
+                aria-label="Enter weather"
+                onClick={hitPlay}
               >
                 ↗
               </button>
             )}
-            {immersive && effectiveWeather === "sun" && (
-              <div className="sun-verse" aria-label="Your Light visual cue">
-                <span>YOUR LIGHT</span>
-                <p>sky blue · porcelain</p>
-              </div>
-            )}
           </div>
         </div>
-        <div className="artwork-caption">
-          <span>01 / SEA GLASS</span>
-          <span>AN IMPOSSIBLE WEATHER SYSTEM</span>
-          <span>↖ DRAG THE ARTWORK</span>
-        </div>
       </section>
-
-      {immersive && (
-        <div className="inside-label">
-          <p className="eyebrow">YOU ARE INSIDE</p>
-          <h2>Sea Glass</h2>
-          <p>
-            Driveways <span>—</span> {currentChapter.name}
-          </p>
-          <button
-            className="back-button"
-            type="button"
-            onClick={() => setImmersive(false)}
-          >
-            ↙ Return to gallery
-          </button>
-        </div>
-      )}
-
       <ExhibitControls
         intensity={intensity}
-        followScore={followScore}
         motion={motion}
-        weather={effectiveWeather}
-        onFollowScoreChange={setFollowScore}
+        weather={weather}
         onIntensityChange={setIntensity}
         onMotionChange={setMotion}
-        onPreviewCrescendo={previewCrescendo}
         onResetView={() => sceneRef.current?.resetCamera()}
         onWeatherChange={chooseWeather}
+      />
+      <LiveWeatherControl
+        playing={playback.playing}
+        trackId={`${track.videoId}:${seekVersion}`}
+        enabled={liveEnabled}
+        onEnabledChange={setLiveEnabled}
+        onWeather={setWeather}
       />
       <PlayerDock
         mountRef={playerMountRef}
         playback={playback}
-        chapterName={currentChapter.name}
-        onSeek={(time) => playerRef.current?.seek(time)}
-        onShowNotes={() => setNotesOpen(true)}
+        track={track}
+        chapterName=""
+        onSeek={(time) => {
+          playerRef.current?.seek(time);
+          setSeekVersion((value) => value + 1);
+        }}
+        onShowNotes={() => setInferenceOpen(true)}
         onTogglePlayback={togglePlayback}
       />
-      {notesOpen && (
-        <ExhibitNotes
-          playbackReady={playback.ready}
-          onClose={() => setNotesOpen(false)}
-          onSeek={(time) => playerRef.current?.seek(time)}
-        />
-      )}
       {inferenceOpen && (
         <WeatherInferencePanel
           onClose={() => setInferenceOpen(false)}
