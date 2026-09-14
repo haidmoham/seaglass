@@ -12,7 +12,15 @@
   display: flex;
   align-items: center;
   gap: 7px;
+  min-height: 40px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
 }
+
+.youtube-label:active { cursor: grabbing; }
+
+.youtube-label a { cursor: pointer; }
 
 .youtube-label a {
   margin-left: auto;

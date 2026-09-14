@@ -51,7 +51,12 @@ export function PlayerDock(props: PlayerDockProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  function handleDragStart(event: PointerEvent<HTMLButtonElement>): void {
+  function handleDragStart(event: PointerEvent<HTMLDivElement>): void {
+    if (event.button !== 0) return;
+    if (
+      event.target instanceof Element &&
+      event.target.closest("a, .youtube-position-reset")
+    ) return;
     const rect = dockRef.current?.getBoundingClientRect();
     if (!rect) return;
     dragRef.current = {
@@ -64,7 +69,7 @@ export function PlayerDock(props: PlayerDockProps) {
     event.preventDefault();
   }
 
-  function handleDragMove(event: PointerEvent<HTMLButtonElement>): void {
+  function handleDragMove(event: PointerEvent<HTMLDivElement>): void {
     const drag = dragRef.current;
     if (!drag.active || drag.pointerId !== event.pointerId) return;
     setPosition(
@@ -72,7 +77,7 @@ export function PlayerDock(props: PlayerDockProps) {
     );
   }
 
-  function handleDragEnd(event: PointerEvent<HTMLButtonElement>): void {
+  function handleDragEnd(event: PointerEvent<HTMLDivElement>): void {
     if (dragRef.current.pointerId !== event.pointerId) return;
     dragRef.current.active = false;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -138,16 +143,18 @@ export function PlayerDock(props: PlayerDockProps) {
         aria-label="YouTube song player"
         style={position ? { left: position.x, top: position.y, right: "auto", bottom: "auto" } : undefined}
       >
-        <div className="youtube-label">
+        <div
+          className="youtube-label"
+          onPointerDown={handleDragStart}
+          onPointerMove={handleDragMove}
+          onPointerUp={handleDragEnd}
+          onPointerCancel={handleDragEnd}
+        >
           <button
             className="youtube-drag-handle"
             type="button"
             aria-label="Move player"
             title="Drag or use arrow keys to move player"
-            onPointerDown={handleDragStart}
-            onPointerMove={handleDragMove}
-            onPointerUp={handleDragEnd}
-            onPointerCancel={handleDragEnd}
             onKeyDown={handleNudge}
           >
             ⠿
