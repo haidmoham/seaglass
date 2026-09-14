@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { authoredReaction } from "../music/reactivity";
 import {
   cloudFragmentShader,
   cloudVertexShader,
@@ -14,6 +15,7 @@ import {
 } from "../weather/modes";
 
 export interface StormSceneController {
+  setPlayback(time: number, playing: boolean): void;
   setEnergy(energy: number): void;
   setMotion(enabled: boolean): void;
   setIntensity(value: number): void;
@@ -26,6 +28,9 @@ export interface StormSceneController {
 type Uniform<T> = { value: T };
 
 interface StormUniforms {
+  bass: Uniform<number>;
+  accent: Uniform<number>;
+  shimmer: Uniform<number>;
   time: Uniform<number>;
   motion: Uniform<number>;
   energy: Uniform<number>;
@@ -117,6 +122,7 @@ function makeCloudMaterial(
       uTime: uniforms.time,
       uMotion: uniforms.motion,
       uEnergy: uniforms.energy,
+      uAccent: uniforms.accent,
       uTurbulence: uniforms.turbulence,
       uBase: { value: new THREE.Color(base) },
       uEdge: { value: new THREE.Color(edge) },
@@ -240,7 +246,12 @@ function buildSeaGlass(uniforms: StormUniforms): THREE.Group {
   const material = new THREE.ShaderMaterial({
     vertexShader: glassVertexShader,
     fragmentShader: glassFragmentShader,
-    uniforms: { uTime: uniforms.time, uEnergy: uniforms.energy },
+    uniforms: {
+      uTime: uniforms.time,
+      uEnergy: uniforms.energy,
+      uBass: uniforms.bass,
+      uShimmer: uniforms.shimmer,
+    },
     transparent: true,
     depthWrite: true,
     side: THREE.DoubleSide,
@@ -411,6 +422,9 @@ export function createStormScene(
   const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 180);
 
   const uniforms: StormUniforms = {
+    bass: { value: 0 },
+    accent: { value: 0 },
+    shimmer: { value: 0 },
     time: { value: 0 },
     motion: { value: 1 },
     energy: { value: 0.18 },
@@ -428,6 +442,10 @@ export function createStormScene(
   };
   let intensity = 0.65;
   let targetEnergy = 0.18;
+  let playbackTime = 0;
+  let playbackPlaying = false;
+  let playbackUpdatedAt = performance.now();
+  const oceanPulse = { value: 0 };
   let motionEnabled = true;
   let disposed = false;
   let frame = 0;
@@ -473,6 +491,7 @@ export function createStormScene(
       uMotion: uniforms.motion,
       uEnergy: uniforms.energy,
       uWaveAmplitude: { value: weather.waveAmplitude },
+      uBass: oceanPulse,
       uWaveSpeed: { value: weather.waveSpeed },
       uFoam: { value: weather.foam },
       uOceanDeep: { value: new THREE.Color(weather.oceanDeep) },
@@ -585,13 +604,50 @@ export function createStormScene(
     lastTime = now;
     if (motionEnabled) elapsedTime += delta;
     const elapsed = elapsedTime;
+    if (motionEnabled) {
+      // Interpolate the 120 ms iframe clock between updates, but stop on stale data.
+      const age = Math.max(0, (now - playbackUpdatedAt) / 1000);
+      const reaction = authoredReaction(
+        playbackTime + (playbackPlaying ? Math.min(age, 0.3) : 0),
+        playbackPlaying && age < 0.5,
+      );
+      const oceanReaction = authoredReaction(
+        playbackTime + (playbackPlaying ? Math.min(age, 0.3) : 0) - 0.16,
+        playbackPlaying && age < 0.5 && playbackTime >= 0.16,
+      );
+      oceanPulse.value = approach(
+        oceanPulse.value,
+        oceanReaction.bass,
+        delta,
+        18,
+      );
+      uniforms.bass.value = approach(
+        uniforms.bass.value,
+        reaction.bass,
+        delta,
+        30,
+      );
+      uniforms.accent.value = approach(
+        uniforms.accent.value,
+        reaction.accent,
+        delta,
+        36,
+      );
+      uniforms.shimmer.value = approach(
+        uniforms.shimmer.value,
+        reaction.shimmer,
+        delta,
+        24,
+      );
+    }
     const temporal = motionEnabled ? 1 : 0;
     uniforms.motion.value = temporal;
     uniforms.energy.value +=
       (targetEnergy - uniforms.energy.value) * Math.min(1, delta * 4.5);
     transitionWeather(weather, weatherTarget, delta);
     uniforms.turbulence.value = weather.turbulence;
-    oceanMaterial.uniforms.uWaveAmplitude.value = weather.waveAmplitude;
+    oceanMaterial.uniforms.uWaveAmplitude.value =
+      weather.waveAmplitude * (1 + oceanPulse.value * 0.7);
     oceanMaterial.uniforms.uWaveSpeed.value = weather.waveSpeed;
     oceanMaterial.uniforms.uFoam.value = weather.foam;
     oceanMaterial.uniforms.uOceanDeep.value.lerp(
@@ -631,8 +687,12 @@ export function createStormScene(
     positionCamera();
 
     if (motionEnabled) {
+      glass.scale.setScalar(1.08 + uniforms.bass.value * 0.16);
       cloudPhase += delta * weather.cloudRotation * (0.035 + intensity * 0.025);
-      debrisPhase -= delta * weather.debrisWind * (0.08 + intensity * 0.13);
+      debrisPhase -=
+        delta *
+        weather.debrisWind *
+        (0.08 + intensity * 0.13 + uniforms.accent.value * 0.28);
       rainFall = (rainFall + delta * weather.rainSpeed) % 13;
       storm.rotation.y = cloudPhase;
       debris.rotation.y = debrisPhase;
@@ -686,6 +746,11 @@ export function createStormScene(
   frame = requestAnimationFrame(render);
 
   return {
+    setPlayback(time: number, playing: boolean): void {
+      playbackTime = Number.isFinite(time) ? Math.max(0, time) : 0;
+      playbackPlaying = playing;
+      playbackUpdatedAt = performance.now();
+    },
     setEnergy(energy: number): void {
       targetEnergy = clamp(energy, 0, 1);
     },

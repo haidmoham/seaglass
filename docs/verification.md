@@ -1,5 +1,20 @@
 # Local verification — 2026-09-14
 
+## Basic authored reactivity — 2026-09-14
+
+- Added bounded bass-like, accent, and shimmer envelopes evaluated from playback
+  time. They are authored at a provisional grid, not measured from the song.
+- Glass responds first; the ocean receives a 160 ms delayed envelope. The
+  Jellyfish documentation inspired this local-response/delayed-response relation.
+  Spring physics and true frequency analysis remain proposals, not this feature.
+- Ten tests pass (five audio-analysis tests plus five authored-envelope tests).
+  Configured lint and TypeScript/Vite build pass.
+- The first reactive public build rendered without captured console errors and
+  YouTube playback advanced. The final delayed-wave build returned HTTP 200 on
+  both custom domains and Vercel, with `index-BioqOAGc.js` on all three.
+- Research notes distinguish source evidence, candidate design units, and future
+  work. No musical alignment or listening-quality claim is made for the grid.
+
 ## Public deployment and motion — 2026-09-14
 
 - Motion now starts enabled at the user's request. Cloud layers counterrotate,

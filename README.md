@@ -11,6 +11,12 @@ Live: [shin86.dev](https://seaglass.shin86.dev),
 Motion starts enabled: rain, ocean, cloud rotation, and glass drift share the
 scene clock. Freeze pauses this motion; Resume continues from that state.
 
+Playback also drives a provisional authored rhythm: glass expansion, a delayed
+ocean response (160 ms), cloud-edge accents, and glass shimmer. These are
+synthetic control envelopes, not detected bass or percussion. The iframe clock
+is interpolated between updates; paused or stale playback releases the response.
+The rhythm module has five deterministic tests in addition to the audio tests.
+
 ## Deploy
 
 Run `npm run build`, then `npx wrangler deploy` for the two Cloudflare custom

@@ -30,7 +30,9 @@ export function ExhibitNotes(props: ExhibitNotesProps) {
       <p>
         The storm follows <strong>authored visual cues</strong> synchronized to
         YouTube time. These cues are provisional art direction. They are not
-        measured frequencies or verified song sections.
+        measured frequencies or verified song sections. A provisional rhythm
+        animates the glass, water, and cloud edges during playback. It is not
+        detected percussion or a measured tempo.
       </p>
       <div className="chapter-list">
         {chapters.map((chapter, index) => (

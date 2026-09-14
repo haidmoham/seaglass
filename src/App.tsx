@@ -64,6 +64,10 @@ export default function App() {
   }, []);
 
   useEffect(() => sceneRef.current?.setMotion(motion), [motion]);
+  useEffect(
+    () => sceneRef.current?.setPlayback(playback.time, playback.playing),
+    [playback.time, playback.playing],
+  );
   useEffect(() => sceneRef.current?.setIntensity(intensity), [intensity]);
   useEffect(
     () => sceneRef.current?.setEnergy(cueEnergy(playback.time)),
