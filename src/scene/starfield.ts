@@ -16,8 +16,11 @@ const fragmentShader = /* glsl */ `
   uniform float uAccent;
   uniform float uShimmer;
   uniform vec2 uPointer;
+  uniform float uMagnet;
+  uniform float uSeed;
 
   vec2 hash(vec2 p) {
+    p += uSeed;
     return fract(sin(vec2(dot(p, vec2(127.1, 311.7)),
       dot(p, vec2(269.5, 183.3)))) * 43758.5453);
   }
@@ -37,6 +40,12 @@ const fragmentShader = /* glsl */ `
     return value;
   }
   vec3 stars(vec2 uv, float density, float depth) {
+    vec2 center = uPointer * vec2(uAspect, 1.0) * 0.5;
+    vec2 offset = uv - center;
+    float influence = exp(-dot(offset, offset) * 12.0) * uMagnet;
+    // Inverse radial warp pulls rendered points inward without cell seams.
+    uv += offset * influence * (0.9 + depth * 0.45);
+    uv += vec2(-offset.y, offset.x) * influence * 0.22;
     vec2 grid = (uv + uPointer * depth * 0.035) * density;
     grid += vec2(uTime * depth * 0.025, uTime * depth * 0.009);
     vec2 cell = floor(grid), local = fract(grid) - 0.5;
@@ -51,7 +60,7 @@ const fragmentShader = /* glsl */ `
       + exp(-abs(point.y) * 150.0 - abs(point.x) * 15.0);
     float flare = cross * step(0.975, seed.x) * (0.8 + uAccent * 2.0);
     vec3 tint = mix(vec3(0.4,0.7,1.0), vec3(1.0,0.72,0.95), seed.y);
-    return tint * (bright * (core + halo) * pulse + flare)
+    return tint * (bright * (core + halo) * pulse + flare) * (1.0 + influence * 1.6)
       * (0.7 + depth * 0.35 + uShimmer * 0.7);
   }
   void main() {
@@ -71,8 +80,8 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
-/** Seeded shader layers: no textures, frame allocations, or random runtime state. */
-export function createStarfield() {
+/** One seed per field; motion remains deterministic for that seed. */
+export function createStarfield(seed = Math.random() * 1000) {
   const uniforms = {
     uTime: { value: 0 },
     uAspect: { value: 1 },
@@ -80,6 +89,8 @@ export function createStarfield() {
     uAccent: { value: 0 },
     uShimmer: { value: 0 },
     uPointer: { value: new THREE.Vector2() },
+    uMagnet: { value: 0 },
+    uSeed: { value: seed },
   };
   const geometry = new THREE.PlaneGeometry(2, 2);
   const material = new THREE.ShaderMaterial({
@@ -92,7 +103,7 @@ export function createStarfield() {
     object,
     resize(aspect: number) { uniforms.uAspect.value = aspect; },
     update(delta: number, motion: boolean, bass: number, accent: number,
-      shimmer: number, pointerX: number, pointerY: number) {
+      shimmer: number, pointerX: number, pointerY: number, magnet: boolean) {
       if (!motion) return;
       uniforms.uTime.value += delta;
       const blend = 1 - Math.exp(-delta * 5);
@@ -101,6 +112,7 @@ export function createStarfield() {
       uniforms.uShimmer.value = THREE.MathUtils.lerp(uniforms.uShimmer.value, shimmer, blend);
       pointerTarget.set(pointerX, pointerY);
       uniforms.uPointer.value.lerp(pointerTarget, blend);
+      uniforms.uMagnet.value = THREE.MathUtils.lerp(uniforms.uMagnet.value, magnet ? 1 : 0, blend);
     },
     dispose() { geometry.dispose(); material.dispose(); },
   };

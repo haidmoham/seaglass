@@ -55,6 +55,7 @@ export function BackgroundArtwork({
 
     let pointerX = 0;
     let pointerY = 0;
+    let magnet = false;
     let frame = 0;
     let disposed = false;
     let previousTime = performance.now();
@@ -72,6 +73,7 @@ export function BackgroundArtwork({
     }
 
     function handlePointerMove(event: PointerEvent): void {
+      magnet = true;
       pointerX = THREE.MathUtils.clamp(
         (event.clientX / Math.max(window.innerWidth, 1)) * 2 - 1,
         -1,
@@ -83,6 +85,8 @@ export function BackgroundArtwork({
         1,
       );
     }
+
+    function releasePointer(): void { magnet = false; }
 
     function render(now: number): void {
       if (disposed) return;
@@ -99,8 +103,9 @@ export function BackgroundArtwork({
         reaction.bass * 0.58,
         reaction.accent * 0.42,
         reaction.shimmer * 0.55,
-        pointerX * 0.55,
-        pointerY * 0.55,
+        pointerX,
+        pointerY,
+        magnet,
       );
       renderer.render(scene, camera);
       frame = requestAnimationFrame(render);
@@ -111,6 +116,11 @@ export function BackgroundArtwork({
     window.addEventListener("pointermove", handlePointerMove, {
       passive: true,
     });
+    window.addEventListener("pointerdown", handlePointerMove, { passive: true });
+    window.addEventListener("pointerup", releasePointer);
+    window.addEventListener("pointercancel", releasePointer);
+    window.addEventListener("blur", releasePointer);
+    document.documentElement.addEventListener("pointerleave", releasePointer);
     resize();
     frame = requestAnimationFrame(render);
 
@@ -119,6 +129,11 @@ export function BackgroundArtwork({
       cancelAnimationFrame(frame);
       resizeObserver.disconnect();
       window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerdown", handlePointerMove);
+      window.removeEventListener("pointerup", releasePointer);
+      window.removeEventListener("pointercancel", releasePointer);
+      window.removeEventListener("blur", releasePointer);
+      document.documentElement.removeEventListener("pointerleave", releasePointer);
       starfield.dispose();
       renderer.dispose();
     };
