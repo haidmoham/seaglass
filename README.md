@@ -89,3 +89,21 @@ proposal beyond this baseline. Next: share real tab audio and compare weather
 changes across upbeat, intense, and quiet passages. Musical fit remains an
 observation to make, not a claim from passing tests.
 
+
+## Final interaction tuning
+
+The background takes its starry direction from shin86.dev's thoughts atmosphere.
+Each visit gets a random seed; each star keeps a stable attractive or repulsive
+polarity. Pointer pull, swirl, extra glow, and parallax are set to 10% of the
+original response. Pointer following uses exponential damping at 2.5/s; attraction
+and release use 1.8/s. Playback envelopes remain separately smoothed at 5/s.
+Freeze and the browser's reduced-motion preference stop this field, including
+its pointer response. If the field appears inert, inspect that preference first.
+
+The mini player's full header supports pointer dragging, except the link and
+reset controls. The volume row has a 44px interaction area and a 24px thumb.
+Mute restores the prior nonzero volume. A zero-volume unmute starts at 50%.
+Desktop API readback was verified; physical-phone volume behavior remains untested.
+
+Final checks: lint, 26 tests, and production build pass. Real-song weather fit
+and shared-tab audio remain explicit manual validation items, not proven results.
