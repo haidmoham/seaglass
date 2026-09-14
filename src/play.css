@@ -34,7 +34,7 @@
   text-align: left;
   background: none;
   font:
-    800 clamp(100px, 13.5vw, 184px)/0.8 "Barlow Condensed",
+    500 clamp(100px, 13.5vw, 184px)/0.8 "Barlow Condensed",
     "DM Sans",
     sans-serif;
   letter-spacing: -0.045em;
