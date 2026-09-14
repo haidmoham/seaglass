@@ -102,11 +102,6 @@ export default function App() {
     <main
       className={`exhibit${immersive ? " is-inside" : ""}${motion ? "" : " is-frozen"}`}
     >
-      <div className="entrance-pigment" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </div>
       {!immersive && (
         <BackgroundArtwork
           motion={motion}

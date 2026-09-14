@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { authoredReaction } from "../music/reactivity";
-import { createFramedSpecimen } from "../scene/framed-specimen";
+import { createStarfield } from "../scene/starfield";
 
 interface BackgroundArtworkProps {
   motion: boolean;
@@ -50,14 +50,15 @@ export function BackgroundArtwork({
     camera.position.set(0, 7.5, 65);
     camera.lookAt(0, 7.5, 0);
 
-    const specimen = createFramedSpecimen();
-    scene.add(specimen.object);
+    const starfield = createStarfield();
+    scene.add(starfield.object);
 
     let pointerX = 0;
     let pointerY = 0;
     let frame = 0;
     let disposed = false;
     let previousTime = performance.now();
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     function resize(): void {
       const rect = renderer.domElement.getBoundingClientRect();
@@ -65,6 +66,7 @@ export function BackgroundArtwork({
       const height = Math.max(1, rect.height);
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
+      starfield.resize(camera.aspect);
       camera.fov = camera.aspect < 0.8 ? 52 : 43;
       camera.updateProjectionMatrix();
     }
@@ -91,10 +93,9 @@ export function BackgroundArtwork({
       const active = playback.playing && age < 0.5;
       const mediaTime = playback.time + (active ? Math.min(age, 0.3) : 0);
       const reaction = authoredReaction(mediaTime, active);
-      specimen.update(
+      starfield.update(
         delta,
-        motionRef.current,
-        false,
+        motionRef.current && !reducedMotion.matches,
         reaction.bass * 0.58,
         reaction.accent * 0.42,
         reaction.shimmer * 0.55,
@@ -118,11 +119,7 @@ export function BackgroundArtwork({
       cancelAnimationFrame(frame);
       resizeObserver.disconnect();
       window.removeEventListener("pointermove", handlePointerMove);
-      specimen.object.geometry.dispose();
-      const materials = Array.isArray(specimen.object.material)
-        ? specimen.object.material
-        : [specimen.object.material];
-      for (const material of materials) material.dispose();
+      starfield.dispose();
       renderer.dispose();
     };
   }, []);
@@ -136,3 +133,4 @@ export function BackgroundArtwork({
     />
   );
 }
+

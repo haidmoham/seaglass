@@ -7,7 +7,7 @@ The handle also supports arrow keys. Pointer capture supports mouse and touch.
 
 The three weather modes are Sun (happy and upbeat), Storm (intense and sad), and
 Snow (chill and introspective). These are artistic mappings, not measured emotions.
-The separate background blob never appears inside the framed or entered world.
+The procedural star field stays behind the page and never enters the weather world.
 The entrance uses heavy sans typography and ideas from Tiramisu. The search flow
 uses Soundspace as a reference. No prior application implementation was copied.
 
@@ -88,3 +88,4 @@ See [verification](docs/search-playback-verification.md). The
 proposal beyond this baseline. Next: share real tab audio and compare weather
 changes across upbeat, intense, and quiet passages. Musical fit remains an
 observation to make, not a claim from passing tests.
+
