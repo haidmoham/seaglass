@@ -39,17 +39,19 @@ const fragmentShader = /* glsl */ `
     }
     return value;
   }
-  vec3 stars(vec2 uv, float density, float depth) {
+  vec3 polarizedStars(vec2 uv, float density, float depth, float polarity) {
     vec2 center = uPointer * vec2(uAspect, 1.0) * 0.5;
     vec2 offset = uv - center;
     float influence = exp(-dot(offset, offset) * 12.0) * uMagnet * 0.4;
-    // Inverse radial warp pulls rendered points inward without cell seams.
-    uv += offset * influence * (0.9 + depth * 0.45);
-    uv += vec2(-offset.y, offset.x) * influence * 0.22;
+    // Separate inverse fields keep each star's seeded polarity stable in motion.
+    uv += offset * influence * polarity * (0.9 + depth * 0.45);
+    uv += vec2(-offset.y, offset.x) * influence * polarity * 0.22;
     vec2 grid = (uv + uPointer * depth * 0.014) * density;
     grid += vec2(uTime * depth * 0.025, uTime * depth * 0.009);
     vec2 cell = floor(grid), local = fract(grid) - 0.5;
     vec2 seed = hash(cell + depth * 37.0);
+    float charge = hash(cell + depth * 37.0 + 91.0).x < 0.5 ? -1.0 : 1.0;
+    if (charge != polarity) return vec3(0.0);
     vec2 point = local - (seed - 0.5) * 0.65;
     float radius = length(point);
     float bright = step(0.80, seed.x);
@@ -62,6 +64,10 @@ const fragmentShader = /* glsl */ `
     vec3 tint = mix(vec3(0.4,0.7,1.0), vec3(1.0,0.72,0.95), seed.y);
     return tint * (bright * (core + halo) * pulse + flare) * (1.0 + influence * 1.6)
       * (0.7 + depth * 0.35 + uShimmer * 0.7);
+  }
+  vec3 stars(vec2 uv, float density, float depth) {
+    return polarizedStars(uv, density, depth, 1.0)
+      + polarizedStars(uv, density, depth, -1.0);
   }
   void main() {
     vec2 uv = (vUv - 0.5) * vec2(uAspect, 1.0);
