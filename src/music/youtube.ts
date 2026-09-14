@@ -6,6 +6,8 @@ export interface Playback {
   playing: boolean;
   ready: boolean;
   message: string;
+  volume: number;
+  muted: boolean;
 }
 
 export interface SongPlayer {
@@ -13,6 +15,8 @@ export interface SongPlayer {
   pause(): void;
   seek(time: number): void;
   load(track: Track): void;
+  setVolume(volume: number): void;
+  toggleMute(): void;
   destroy(): void;
 }
 
@@ -123,6 +127,8 @@ export function connectYouTube(
       playing: ready && player?.getPlayerState() === YT.PlayerState.PLAYING,
       ready,
       message,
+      volume: ready ? (player?.getVolume() ?? 100) : 100,
+      muted: ready ? (player?.isMuted() ?? false) : false,
     });
   }
 
@@ -224,11 +230,28 @@ export function connectYouTube(
         playing: false,
         ready,
         message,
+        volume: player?.getVolume() ?? 100,
+        muted: player?.isMuted() ?? false,
       });
       if (ready) {
         player?.cueVideoById(nextTrack.videoId);
         pendingTrack = undefined;
       }
+    },
+    setVolume(volume) {
+      if (!ready || !Number.isFinite(volume)) return;
+      const level = Math.round(Math.max(0, Math.min(100, volume)));
+      player?.setVolume(level);
+      if (level > 0) player?.unMute();
+      else player?.mute();
+    },
+    toggleMute() {
+      if (!ready) return;
+      if (player?.isMuted()) {
+        if (player.getVolume() === 0) player.setVolume(50);
+        player.unMute();
+      }
+      else player?.mute();
     },
     destroy() {
       destroyed = true;

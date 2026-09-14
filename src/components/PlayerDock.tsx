@@ -24,6 +24,8 @@ interface PlayerDockProps {
   onSeek(time: number): void;
   onShowNotes(): void;
   onTogglePlayback(): void;
+  onVolumeChange(volume: number): void;
+  onToggleMute(): void;
 }
 
 export function PlayerDock(props: PlayerDockProps) {
@@ -180,6 +182,32 @@ export function PlayerDock(props: PlayerDockProps) {
           ) : null}
         </div>
         <div className="youtube-mount" ref={props.mountRef} />
+        <div className="player-volume">
+          <button
+            type="button"
+            aria-label={props.playback.muted ? "Unmute" : "Mute"}
+            aria-pressed={props.playback.muted}
+            disabled={!props.playback.ready}
+            onClick={props.onToggleMute}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <path d="M11 5 6 9H3v6h3l5 4Z" />
+              {props.playback.muted
+                ? <path d="m16 9 6 6m0-6-6 6" />
+                : <path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" />}
+            </svg>
+          </button>
+          <input
+            type="range"
+            aria-label="Volume"
+            aria-valuetext={props.playback.muted ? "Muted" : `${props.playback.volume}%`}
+            min="0" max="100" step="1"
+            value={props.playback.muted ? 0 : props.playback.volume}
+            disabled={!props.playback.ready}
+            onChange={(event) => props.onVolumeChange(Number(event.target.value))}
+          />
+          <output>{props.playback.muted ? 0 : props.playback.volume}</output>
+        </div>
         <p className="player-status" role="status">
           {!props.playback.ready
             ? "loading"

@@ -23,6 +23,8 @@ const initialPlayback: Playback = {
   playing: false,
   ready: false,
   message: "loading",
+  volume: 100,
+  muted: false,
 };
 
 export default function App() {
@@ -187,6 +189,8 @@ export default function App() {
         mountRef={playerMountRef}
         playback={playback}
         track={track}
+        onVolumeChange={(volume) => playerRef.current?.setVolume(volume)}
+        onToggleMute={() => playerRef.current?.toggleMute()}
         chapterName=""
         onSeek={(time) => {
           playerRef.current?.seek(time);
