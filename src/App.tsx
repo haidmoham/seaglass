@@ -63,6 +63,7 @@ export default function App() {
     return () => {
       playerRef.current?.destroy();
       playerRef.current = null;
+      mount.remove();
     };
   }, []);
   useEffect(() => sceneRef.current?.setMotion(motion), [motion]);
